@@ -10,6 +10,7 @@ import AccountSettings from './components/UserProfile/AccountSettings';
 import ChartOne from './components/Visualise/ChartOne'; // Import ChartOne component
 import ChartTwo from './components/Visualise/ChartTwo'; // Import ChartTwo component
 import ChartThree from './components/Visualise/ChartThree'; // Import ChartThree component
+import ExportOptions from './components/Export/ExportOptions'; // Correct path for ExportOptions component
 
 const App = () => {
   const [ownerData, setOwnerData] = useState({
@@ -20,6 +21,19 @@ const App = () => {
     coalMineName: "John's Coal Mine",
     about: "Riverstone Coal Mine is a leading coal mining operation located in India, established in 1985. With a focus on safety, sustainability, and innovation, we extract high-quality coal using advanced mining techniques. Our commitment to reducing environmental impact and supporting local communities is at the core of our operations through continuous investment in modern technologies."
   });
+
+  const inputData = [
+    { parameter: "Daily Production (tons)", value: 1500 },
+    { parameter: "Employee Count", value: 200 },
+    { parameter: "Safety Incidents", value: 2 },
+    { parameter: "Operational Hours", value: 24 },
+  ];
+  
+  const suggestions = [
+    { parameter: "Emission Reduction", value: "Implement scrubbers to reduce emissions by 15%" },
+    { parameter: "Water Usage Optimization", value: "Recycle 50% of water used in operations" },
+    { parameter: "Safety Improvement", value: "Conduct bi-weekly safety drills" },
+  ];
 
   return (
     <Router>
@@ -34,7 +48,7 @@ const App = () => {
               if (section === 'dashboard') window.location.href = '/visualise';
               else if (section === 'emissionData') window.location.href = '/dataInput';
               else if (section === 'carbonSinks') window.location.href = '/carbonSinks';
-              else if (section === 'pathways') window.location.href = '/suggestions'; // Updated to navigate to suggestions
+              else if (section === 'pathways') window.location.href = '/suggestions';
               else if (section === 'reports') window.location.href = '/reports';
             }}
           />
@@ -50,7 +64,15 @@ const App = () => {
               <Route path="/chartTwo" element={<ChartTwo />} />
               <Route path="/chartThree" element={<ChartThree />} />
               <Route path="/carbonSinks" element={<div>Carbon Sinks Page</div>} />
-              <Route path="/reports" element={<div>Reports Page</div>} />
+              <Route path="/reports" element={
+                <div>
+                  <h1 className="text-2xl font-bold mb-4">Reports</h1>
+                  <ExportOptions
+                    inputData={inputData}
+                    suggestions={suggestions}
+                  />
+                </div>
+              } />
               {/* Add more routes as needed */}
             </Routes>
           </main>
