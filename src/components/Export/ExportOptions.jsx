@@ -30,7 +30,7 @@ function ExportOptions({ inputData, suggestions }) {
             className="w-full h-full flex flex-col items-center justify-center bg-blue-500 text-white rounded hover:bg-blue-600 p-4"
           >
             <FaFileCsv className="mb-2 text-4xl" />
-            <span className="text-lg">Export Input Data (CSV)</span>
+            <span className="text-lg">Export Report (CSV)</span>
           </button>
         </div>
         <div className="flex-1 h-40">
@@ -39,7 +39,7 @@ function ExportOptions({ inputData, suggestions }) {
             className="w-full h-full flex flex-col items-center justify-center bg-red-500 text-white rounded hover:bg-red-600 p-4"
           >
             <FaFilePdf className="mb-2 text-4xl" />
-            <span className="text-lg">Export Suggestions (PDF)</span>
+            <span className="text-lg">Export Report (PDF)</span>
           </button>
         </div>
       </div>
