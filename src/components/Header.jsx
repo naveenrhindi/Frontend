@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 function Header({ onProfileClick, onAccountSettingsClick, onSectionChange, ownerData }) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -10,14 +11,14 @@ function Header({ onProfileClick, onAccountSettingsClick, onSectionChange, owner
   return (
     <header className="bg-gray-900 dark:bg-gray-800 text-white p-4 flex flex-col sm:flex-row justify-between items-center">
       <div className="text-2xl font-bold">
-        <a href="#" className="hover:text-gray-300">Coal Mine Owner Dashboard</a>
+        <Link to="/" className="hover:text-gray-300">Coal Mine Owner Dashboard</Link>
       </div>
       
       <nav className="space-x-4 mt-2 sm:mt-0">
-        <button onClick={() => onSectionChange('dashboard')} className="hover:text-gray-400">Dashboard</button>
+        <Link to="/visualise" className="hover:text-gray-400">Dashboard</Link>
         <button onClick={() => onSectionChange('emissionData')} className="hover:text-gray-400">Emission Data</button>
         <button onClick={() => onSectionChange('carbonSinks')} className="hover:text-gray-400">Carbon Sinks</button>
-        <button onClick={() => onSectionChange('pathways')} className="hover:text-gray-400">Pathways</button>
+        <Link to="/suggestions" className="hover:text-gray-400">Pathways</Link>
         <button onClick={() => onSectionChange('reports')} className="hover:text-gray-400">Reports</button>
       </nav>
 

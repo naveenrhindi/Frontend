@@ -30,7 +30,13 @@ const App = () => {
             ownerData={ownerData}
             onProfileClick={() => { window.location.href = '/myProfile' }} 
             onAccountSettingsClick={() => { window.location.href = '/accountSettings' }} 
-            onSectionChange={() => { /* Section change handler */ }}
+            onSectionChange={(section) => { 
+              if (section === 'dashboard') window.location.href = '/visualise';
+              else if (section === 'emissionData') window.location.href = '/dataInput';
+              else if (section === 'carbonSinks') window.location.href = '/carbonSinks';
+              else if (section === 'pathways') window.location.href = '/suggestions'; // Updated to navigate to suggestions
+              else if (section === 'reports') window.location.href = '/reports';
+            }}
           />
           <main className="p-8 bg-gray-100 dark:bg-gray-900 flex-grow overflow-auto">
             <Routes>
@@ -43,6 +49,8 @@ const App = () => {
               <Route path="/chartOne" element={<ChartOne />} />
               <Route path="/chartTwo" element={<ChartTwo />} />
               <Route path="/chartThree" element={<ChartThree />} />
+              <Route path="/carbonSinks" element={<div>Carbon Sinks Page</div>} />
+              <Route path="/reports" element={<div>Reports Page</div>} />
               {/* Add more routes as needed */}
             </Routes>
           </main>
