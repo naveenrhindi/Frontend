@@ -1,23 +1,40 @@
 import React from "react";
-import { saveAs } from "file-saver";
-import jsPDF from "jspdf";
+import jsPDF from 'jspdf';
 import Papa from 'papaparse';
 import { FaFileCsv, FaFilePdf } from 'react-icons/fa';
+import { saveAs } from "file-saver";
 
-function ExportOptions({ inputData, suggestions }) {
+const ExportOptions = ({ inputData, suggestions }) => {
   const exportToCSV = (data, filename) => {
     const csv = Papa.unparse(data);
     const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
     saveAs(blob, `${filename}.csv`);
   };
 
-  const exportToPDF = (data, filename) => {
-    const doc = new jsPDF();
-    doc.text("Exported Data", 10, 10);
-    data.forEach((item, index) => {
-      doc.text(`${item.parameter}: ${item.value}`, 10, 20 + index * 10);
+  const exportToPDF = () => {
+    const pdf = new jsPDF();
+    pdf.setFontSize(18);
+    pdf.text("Coal Mine Report", 10, 10);
+
+    // Adding Input Data
+    pdf.setFontSize(16);
+    pdf.text("Input Data:", 10, 20);
+    pdf.setFontSize(12);
+    inputData.forEach((item, index) => {
+      pdf.text(`${item.parameter}: ${item.value}`, 10, 30 + index * 10);
     });
-    doc.save(`${filename}.pdf`);
+
+    // Adding Suggestions
+    pdf.setFontSize(16);
+    const suggestionsStartY = 30 + inputData.length * 10 + 10;
+    pdf.text("Suggestions:", 10, suggestionsStartY);
+    pdf.setFontSize(12);
+    suggestions.forEach((item, index) => {
+      pdf.text(`${item.parameter}: ${item.value}`, 10, suggestionsStartY + 10 + index * 10);
+    });
+
+    // Saving the PDF
+    pdf.save("coal_mine_report.pdf");
   };
 
   return (
@@ -30,21 +47,21 @@ function ExportOptions({ inputData, suggestions }) {
             className="w-full h-full flex flex-col items-center justify-center bg-blue-500 text-white rounded hover:bg-blue-600 p-4"
           >
             <FaFileCsv className="mb-2 text-4xl" />
-            <span className="text-lg">Export Report (CSV)</span>
+            <span className="text-lg">Export Input Data (CSV)</span>
           </button>
         </div>
         <div className="flex-1 h-40">
           <button
-            onClick={() => exportToPDF(suggestions, "Suggestions")}
+            onClick={exportToPDF}
             className="w-full h-full flex flex-col items-center justify-center bg-red-500 text-white rounded hover:bg-red-600 p-4"
           >
             <FaFilePdf className="mb-2 text-4xl" />
-            <span className="text-lg">Export Report (PDF)</span>
+            <span className="text-lg">Export to PDF</span>
           </button>
         </div>
       </div>
     </div>
   );
-}
+};
 
 export default ExportOptions;
