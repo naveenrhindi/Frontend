@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import Header from './components/Header';
 import Sidebar from './components/Sidebar';
 import DataInput from './components/DataInput/DataInput.jsx';
@@ -11,8 +11,7 @@ import ChartOne from './components/Visualise/ChartOne'; // Import ChartOne compo
 import ChartTwo from './components/Visualise/ChartTwo'; // Import ChartTwo component
 import ChartThree from './components/Visualise/ChartThree'; // Import ChartThree component
 
-function DashboardLayout({ children }) {
-  const [selectedSection, setSelectedSection] = useState('visualize'); // Default to visualize section
+const App = () => {
   const [ownerData, setOwnerData] = useState({
     name: "John Doe",
     email: "john.doe@example.com",
@@ -22,60 +21,35 @@ function DashboardLayout({ children }) {
     about: "Riverstone Coal Mine is a leading coal mining operation located in India, established in 1985. With a focus on safety, sustainability, and innovation, we extract high-quality coal using advanced mining techniques. Our commitment to reducing environmental impact and supporting local communities is at the core of our operations through continuous investment in modern technologies."
   });
 
-
-
-  const renderContent = () => {
-    const exampleData = {
-      carbonEmissions: 60, // Example carbon emissions value
-      waterUsage: 120, // Example water usage value
-    };
-
-    switch (selectedSection) {
-      case 'emissionData':
-      case 'dataInput':
-        return <DataInput />;
-      case 'visualize':
-      case 'dashboard':
-        return <Visualization />;
-      case 'suggestions':
-      case 'pathways': // Display Suggestions content for Pathways section
-        return <Suggestions data={exampleData} />;
-      case 'profile':
-        return <MyProfile ownerData={ownerData} />;
-      case 'settings':
-        return <AccountSettings ownerData={ownerData} onSave={setOwnerData} />;
-      case 'areaChart': // Display ChartOne component for AreaChart
-        return <ChartOne />;
-      case 'barChart': // Display ChartTwo component for BarChart
-        return <ChartTwo />;
-      case 'donutChart': // Display ChartThree component for DonutChart
-        return <ChartThree />;
-      
-      case 'carbonSinks':
-      case 'reports':
-        return <div className="p-8">Content for {selectedSection}</div>;
-      default:
-        return null;
-    }
-  };
-
   return (
-    <div className="flex h-screen overflow-hidden">
-      <Sidebar onSelect={setSelectedSection} />
-      <div className="flex flex-col flex-grow">
-        <Header 
-          ownerData={ownerData}
-          onProfileClick={() => setSelectedSection('profile')} 
-          onAccountSettingsClick={() => setSelectedSection('settings')} 
-          onSectionChange={setSelectedSection}
-        />
-        <main className="p-8 bg-gray-100 dark:bg-gray-900 flex-grow overflow-auto">
-          {renderContent()}
-          {children}
-        </main>
+    <Router>
+      <div className="flex h-screen overflow-hidden">
+        <Sidebar />
+        <div className="flex flex-col flex-grow">
+          <Header 
+            ownerData={ownerData}
+            onProfileClick={() => { window.location.href = '/myProfile' }} 
+            onAccountSettingsClick={() => { window.location.href = '/accountSettings' }} 
+            onSectionChange={() => { /* Section change handler */ }}
+          />
+          <main className="p-8 bg-gray-100 dark:bg-gray-900 flex-grow overflow-auto">
+            <Routes>
+              <Route path="/" element={<Navigate to="/dataInput" />} />
+              <Route path="/dataInput" element={<DataInput />} />
+              <Route path="/visualise" element={<Visualization />} />
+              <Route path="/suggestions" element={<Suggestions />} />
+              <Route path="/myProfile" element={<MyProfile ownerData={ownerData} />} />
+              <Route path="/accountSettings" element={<AccountSettings ownerData={ownerData} onSave={setOwnerData} />} />
+              <Route path="/chartOne" element={<ChartOne />} />
+              <Route path="/chartTwo" element={<ChartTwo />} />
+              <Route path="/chartThree" element={<ChartThree />} />
+              {/* Add more routes as needed */}
+            </Routes>
+          </main>
+        </div>
       </div>
-    </div>
+    </Router>
   );
 }
 
-export default DashboardLayout;
+export default App;

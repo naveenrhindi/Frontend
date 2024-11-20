@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { FaDatabase, FaChartBar, FaLightbulb, FaCog, FaBars } from 'react-icons/fa';
+import { Link } from 'react-router-dom';
 
-function Sidebar({ onSelect }) {
+function Sidebar() {
   const [isOpen, setIsOpen] = useState(true);
   const [chartsOpen, setChartsOpen] = useState(false);
 
@@ -16,7 +17,6 @@ function Sidebar({ onSelect }) {
   return (
     <div className={`flex flex-col ${isOpen ? 'w-64' : 'w-20'} bg-gray-900 dark:bg-gray-800 h-screen p-10 transition-width duration-300 relative`}>
       <div className="flex justify-between items-center mb-8 overflow-y-hidden">
-        {/* Logo */}
         {isOpen && (
           <div className="flex items-center">
             <img 
@@ -27,72 +27,59 @@ function Sidebar({ onSelect }) {
             <span className="text-white text-center text-2xl font-bold">Logo</span>
           </div>
         )}
-        
-        {/* Hamburger Icon */}
         <button onClick={toggleSidebar} className="text-white focus:outline-none absolute top-6 right-6">
           <FaBars className="w-6 h-6" />
         </button>
       </div>
-
-      {/* Navigation Links */}
       {isOpen && (
         <nav className="flex flex-col space-y-4">
-          {/* Data Input Section */}
-          <div className=''>
+          <div>
             <p className="text-gray-400 text-sm mb-2">DATA INPUT</p>
-            <a href="#" className="text-white hover:text-gray-400 flex items-center" onClick={() => onSelect('dataInput')}>
+            <Link to="/dataInput" className="text-white hover:text-gray-400 flex items-center">
               <FaDatabase className="w-6 h-6 mr-2 ml-6" />
-              {isOpen && <span>Data Input</span>}
-            </a>
+              <span>Data Input</span>
+            </Link>
           </div>
-          
-          {/* Visualize Section */}
           <div>
             <p className="text-gray-400 text-sm mb-2">VISUALIZE</p>
-            <a href="#" className="text-white hover:text-gray-400 flex items-center" onClick={() => onSelect('visualize')}>
+            <Link to="/visualise" className="text-white hover:text-gray-400 flex items-center">
               <FaChartBar className="w-6 h-6 mr-2 ml-6" />
-              {isOpen && <span>Visualize</span>}
-            </a>
+              <span>Visualize</span>
+            </Link>
           </div>
-
-          {/* Suggestions Section */}
           <div>
             <p className="text-gray-400 text-sm mb-2">SUGGESTIONS</p>
-            <a href="#" className="text-white hover:text-gray-400 flex items-center" onClick={() => onSelect('suggestions')}>
+            <Link to="/suggestions" className="text-white hover:text-gray-400 flex items-center">
               <FaLightbulb className="w-6 h-6 mr-2 ml-6" />
-              {isOpen && <span>Suggestions</span>}
-            </a>
+              <span>Suggestions</span>
+            </Link>
           </div>
-
-          {/* Charts Dropdown */}
           <div>
             <p className="text-gray-400 text-sm mb-2">CHARTS</p>
             <button className="text-white hover:text-gray-400 flex items-center" onClick={toggleCharts}>
               <FaChartBar className="w-6 h-6 mr-2 ml-6" />
-              {isOpen && <span>Charts</span>}
+              <span>Charts</span>
             </button>
             {chartsOpen && (
               <div className="ml-10">
-                <a href="#" className="text-white hover:text-gray-400" onClick={() => onSelect('areaChart')}>
-                  {isOpen && <span>Area Chart</span>}
-                </a>
-                <a href="#" className="text-white hover:text-gray-400" onClick={() => onSelect('barChart')}>
-                  {isOpen && <span>Bar Chart</span>}
-                </a>
-                <a href="#" className="text-white hover:text-gray-400" onClick={() => onSelect('donutChart')}>
-                  {isOpen && <span>Donut Chart</span>}
-                </a>
+                <Link to="/chartOne" className="text-white hover:text-gray-400">
+                  <span>Area Chart</span>
+                </Link>
+                <Link to="/chartTwo" className="text-white hover:text-gray-400">
+                  <span>Bar Chart</span>
+                </Link>
+                <Link to="/chartThree" className="text-white hover:text-gray-400">
+                  <span>Donut Chart</span>
+                </Link>
               </div>
             )}
           </div>
-
-          {/* Settings */}
           <div>
             <p className="text-gray-400 text-sm mb-2">OTHERS</p>
-            <a href="#" className="text-white hover:text-gray-400 flex items-center" onClick={() => onSelect('settings')}>
+            <Link to="/accountSettings" className="text-white hover:text-gray-400 flex items-center">
               <FaCog className="w-6 h-6 mr-2 ml-6" />
-              {isOpen && <span>Settings</span>}
-            </a>
+              <span>Settings</span>
+            </Link>
           </div>
         </nav>
       )}
