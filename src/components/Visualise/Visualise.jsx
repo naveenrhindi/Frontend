@@ -80,7 +80,7 @@ const Visualization = () => {
       </div>
 
       {/* ChartOne */}
-      <div className="mb-8 border border-black p-6 rounded-lg shadow-md mt-8 ml-0">
+      <div className="mb-8 border border-black p-6 rounded-lg shadow-md transition-transform duration-500 ease-in-out transform hover:scale-105 hover:shadow-2xl mt-8 ml-0">
         <ChartOne title="Coal Production and Fuel Consumption" dateRange="January - December" data={chartOneData} />
       </div>
 

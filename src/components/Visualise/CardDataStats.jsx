@@ -9,7 +9,7 @@ const CardDataStats = ({
   icon,
 }) => {
   return (
-    <div className="rounded-sm border border-black bg-white py-6 px-7.5 shadow-lg transition-transform duration-500 ease-in-out transform hover:scale-105 hover:shadow-2xl">
+    <div className="rounded-lg border border-black bg-white py-6 px-7.5 shadow-lg transition-transform duration-500 ease-in-out transform hover:scale-105 hover:shadow-2xl">
       <div className="flex h-12 w-12 items-center justify-center rounded-full bg-meta-2 dark:bg-meta-4 text-white mr-4">
         <img src={icon} alt={`${title} icon`} className="h-15 w-15 ml-10 mt-2 mb-2 " />
       </div>

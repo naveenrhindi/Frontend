@@ -23,7 +23,7 @@ const ChartOne = ({ title, dateRange, data }) => {
     ],
     stroke: { width: [2, 2], curve: 'straight' },
     grid: {
-      borderColor: '#808080', // Gray-700 color for grid lines
+      borderColor: '#d1d5db', // Lighter version of gray for grid lines
       xaxis: { lines: { show: true } },
       yaxis: { lines: { show: true } },
     },
@@ -56,7 +56,7 @@ const ChartOne = ({ title, dateRange, data }) => {
   };
 
   return (
-    <div className="col-span-12 rounded-sm bg-white p-6 shadow-lg transition-transform duration-500 ease-in-out transform hover:scale-105 hover:shadow-2xl">
+    <div className="col-span-12 rounded-sm bg-white p-6">
       <div className="mb-4 justify-between gap-4 sm:flex">
         <div>
           <h4 className="text-xl font-semibold text-black">

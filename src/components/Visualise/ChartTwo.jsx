@@ -7,7 +7,7 @@ const options = {
     fontFamily: 'Satoshi, sans-serif',
     type: 'bar',
     height: 335,
-    background: '#1F2937', // Background color for the chart
+    background: '#FFFFFF', // Background color for the chart
     stacked: false, // Temporarily disable stacking for testing
     toolbar: { show: false },
     zoom: { enabled: false },
@@ -34,19 +34,19 @@ const options = {
     categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
     labels: {
       style: {
-        colors: '#FFFFFF', // White text color for x-axis labels
+        colors: '#000000', // Black text color for x-axis labels
       },
     },
   },
   yaxis: {
     labels: {
       style: {
-        colors: '#FFFFFF', // White text color for y-axis labels
+        colors: '#000000', // Black text color for y-axis labels
       },
     },
   },
   grid: {
-    borderColor: '#374151', // Gray-700 color for grid lines
+    borderColor: '#d1d5db', // Lighter version of gray for grid lines
     xaxis: { lines: { show: true } },
     yaxis: { lines: { show: true } },
   },
@@ -58,7 +58,7 @@ const options = {
     fontSize: '14px',
     markers: { radius: 99 },
     labels: {
-      colors: '#FFFFFF', // White text color for legend labels
+      colors: '#000000', // Black text color for legend labels
     },
   },
   fill: { opacity: 1 },
@@ -70,35 +70,39 @@ const ChartTwo = () => {
       {
         name: 'Carbon Emissions',
         data: [30, 40, 35, 50, 49, 60, 70, 91, 80, 70, 60, 50],
-        color: '#3C50E0' // Define color directly if necessary
+        color: '#3C50E0', // Define color directly if necessary
       },
       {
         name: 'Environmental Standards Limit',
         data: Array(12).fill(50), // Array to ensure consistency
-        color: '#80CAEE' // Ensure a distinguishable color
-      }
+        color: '#80CAEE', // Ensure a distinguishable color
+      },
     ],
   });
 
   return (
-    <div className="col-span-12 rounded-sm  border-stroke bg-gray-800 p-127.5 shadow-default dark:border-strokedark dark:bg-boxdark xl:col-span-4">
-      <div className="mb-4 justify-between gap-4 sm:flex bg-gray-800">
+    <div className="col-span-12 rounded-lg border border-black bg-white p-6 shadow-lg transition-transform duration-500 ease-in-out transform hover:scale-105 hover:shadow-2xl xl:col-span-4">
+      <div className="mb-4 justify-between gap-4 sm:flex">
         <div>
-          <h4 className="text-xl font-semibold text-white dark:text-white mb-4 ml-6 mt-6">
+          <h4 className="text-xl font-semibold text-black mb-4 ml-6 mt-6">
             Carbon Emissions vs Environmental Standards
           </h4>
         </div>
         <div>
-          <div className="relative z-20 inline-block bg-gray-800">
+          <div className="relative z-20 inline-block">
             <select
               name="dateRange"
               id="dateRange"
-              className="relative z-20 inline-flex appearance-none bg-gray-800 text-white py-1 pl-3 pr-8 text-lg font-medium outline-none mt-6"
+              className="relative z-20 inline-flex appearance-none bg-white text-black py-1 pl-3 pr-8 text-lg font-medium outline-none mt-6"
             >
-              <option value="thisMonth" className="dark:bg-boxdark text-gray-950 bg-white">This Month</option>
-              <option value="lastMonth" className="dark:bg-boxdark text-gray-950 bg-white ">Last Month</option>
+              <option value="thisMonth" className="text-gray-950 bg-white">
+                This Month
+              </option>
+              <option value="lastMonth" className="text-gray-950 bg-white">
+                Last Month
+              </option>
             </select>
-            <span className="absolute top-1/2 right-3 z-10  -translate-y-1/2 bg-gray-800">
+            <span className="absolute top-1/2 right-3 z-10 -translate-y-1/2">
               <svg
                 width="10"
                 height="6"
@@ -123,7 +127,7 @@ const ChartTwo = () => {
       </div>
 
       <div>
-        <div id="chartTwo" className="ml-6 -mb-0 bg-gray-800 mt-10">
+        <div id="chartTwo" className="ml-6 -mb-0 mt-10">
           <ReactApexChart options={options} series={state.series} type="bar" height={350} />
         </div>
       </div>
