@@ -39,7 +39,7 @@ const App = () => {
     <Router>
       <div className="flex h-screen overflow-hidden">
         <Sidebar />
-        <div className="flex flex-col flex-grow">
+        <div className="flex flex-col flex-grow bg-white">
           <Header 
             ownerData={ownerData}
             onProfileClick={() => { window.location.href = '/myProfile' }} 
@@ -52,7 +52,7 @@ const App = () => {
               else if (section === 'reports') window.location.href = '/reports';
             }}
           />
-          <main className="p-8 bg-gray-100 dark:bg-gray-900 flex-grow overflow-auto">
+          <main className="p-8 bg-white dark:bg-white flex-grow overflow-auto">
             <Routes>
               <Route path="/" element={<Navigate to="/dataInput" />} />
               <Route path="/dataInput" element={<DataInput />} />

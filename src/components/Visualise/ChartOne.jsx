@@ -23,7 +23,7 @@ const ChartOne = ({ title, dateRange, data }) => {
     ],
     stroke: { width: [2, 2], curve: 'straight' },
     grid: {
-      borderColor: '#374151', // Gray-700 color for grid lines
+      borderColor: '#808080', // Gray-700 color for grid lines
       xaxis: { lines: { show: true } },
       yaxis: { lines: { show: true } },
     },
@@ -41,7 +41,7 @@ const ChartOne = ({ title, dateRange, data }) => {
       ],
       labels: {
         style: {
-          colors: '#FFFFFF', // White text color for x-axis labels
+          colors: '#000000', // Black text color for x-axis labels
         },
       },
     },
@@ -49,23 +49,23 @@ const ChartOne = ({ title, dateRange, data }) => {
       min: 0, max: 100,
       labels: {
         style: {
-          colors: '#FFFFFF', // White text color for y-axis labels
+          colors: '#000000', // Black text color for y-axis labels
         },
       },
     },
   };
 
   return (
-    <div className="col-span-12 rounded-sm border-stroke bg-gray-800 p-6 shadow-default dark:border-strokedark dark:bg-boxdark w-full">
+    <div className="col-span-12 rounded-sm bg-white p-6 shadow-lg transition-transform duration-500 ease-in-out transform hover:scale-105 hover:shadow-2xl">
       <div className="mb-4 justify-between gap-4 sm:flex">
         <div>
-          <h4 className="text-xl font-semibold text-white dark:text-white">
+          <h4 className="text-xl font-semibold text-black">
             {title}
           </h4>
         </div>
         <div>
           <div className="relative z-20 inline-block">
-            <div className="chart-date-range text-lg font-semibold text-white dark:text-white mt-2">
+            <div className="chart-date-range text-lg font-semibold text-black mt-2">
               {dateRange}
             </div>
           </div>
@@ -75,11 +75,11 @@ const ChartOne = ({ title, dateRange, data }) => {
       <div className="flex flex-wrap items-center space-x-4 mb-4">
         <div className="flex items-center space-x-2">
           <span className="w-3 h-3 ml-6 rounded-full bg-[#3C50E0]"></span>
-          <span className="text-sm text-white dark:text-white">Coal Production</span>
+          <span className="text-sm text-black">Coal Production</span>
         </div>
         <div className="flex items-center space-x-2">
           <span className="w-3 h-3 rounded-full bg-[#80CAEE]"></span>
-          <span className="text-sm text-white dark:text-white">Fuel Consumption</span>
+          <span className="text-sm text-black">Fuel Consumption</span>
         </div>
       </div>
 

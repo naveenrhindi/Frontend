@@ -45,7 +45,7 @@ const Visualization = () => {
 
   return (
     <div className="p-6 rounded-lg shadow-md mt-8 ml-8">
-      <h2 className="text-2xl font-bold mb-4 text-gray-800 dark:text-white">Data Visualization</h2>
+      <h2 className="text-2xl font-bold mb-4 text-black">Data Visualization</h2>
 
       {/* Cards Section */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
@@ -80,7 +80,7 @@ const Visualization = () => {
       </div>
 
       {/* ChartOne */}
-      <div className="mb-8 bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md mt-8 ml-0 ">
+      <div className="mb-8 border border-black p-6 rounded-lg shadow-md mt-8 ml-0">
         <ChartOne title="Coal Production and Fuel Consumption" dateRange="January - December" data={chartOneData} />
       </div>
 
