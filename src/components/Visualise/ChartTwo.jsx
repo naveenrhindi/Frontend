@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import ReactApexChart from 'react-apexcharts';
 
 const options = {
-  colors: ['#3C50E0', '#80CAEE'],
+  colors: ['#006400', '#90EE90'], // Dark Green and Light Green (PaleGreen)
   chart: {
     fontFamily: 'Satoshi, sans-serif',
     type: 'bar',
@@ -70,12 +70,12 @@ const ChartTwo = () => {
       {
         name: 'Carbon Emissions',
         data: [30, 40, 35, 50, 49, 60, 70, 91, 80, 70, 60, 50],
-        color: '#3C50E0', // Define color directly if necessary
+        color: '#006400', // Dark Green
       },
       {
         name: 'Environmental Standards Limit',
         data: Array(12).fill(50), // Array to ensure consistency
-        color: '#80CAEE', // Ensure a distinguishable color
+        color: '#90EE90', // Light Green (PaleGreen)
       },
     ],
   });

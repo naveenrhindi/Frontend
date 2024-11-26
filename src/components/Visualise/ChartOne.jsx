@@ -4,7 +4,7 @@ import ReactApexChart from 'react-apexcharts';
 const ChartOne = ({ title, dateRange, data }) => {
   const options = {
     legend: { show: false, position: 'top', horizontalAlign: 'left' },
-    colors: ['#3C50E0', '#80CAEE'],
+    colors: ['#006400', '#90EE90'], // Dark Green and Light Green (PaleGreen)
     chart: {
       height: '100%',
       type: 'area',
@@ -21,7 +21,7 @@ const ChartOne = ({ title, dateRange, data }) => {
       { breakpoint: 1024, options: { chart: { height: '100%' } } },
       { breakpoint: 1366, options: { chart: { height: '100%' } } },
     ],
-    stroke: { width: [2, 2], curve: 'straight' },
+    stroke: { width: [2, 2], curve: 'straight', colors: ['#006400', '#32CD32'] }, // Keeping dark green and making light green more visible
     grid: {
       borderColor: '#d1d5db', // Lighter version of gray for grid lines
       xaxis: { lines: { show: true } },
@@ -31,8 +31,8 @@ const ChartOne = ({ title, dateRange, data }) => {
     markers: {
       size: 4,
       colors: '#fff',
-      strokeColors: ['#3056D3', '#80CAEE'],
-      strokeWidth: 3,
+      strokeColors: ['#006400', '#32CD32'], // Dark Green and more visible Light Green
+      strokeWidth: [2, 3], // Making light green marker slightly thicker
     },
     xaxis: {
       type: 'category',
@@ -74,11 +74,11 @@ const ChartOne = ({ title, dateRange, data }) => {
 
       <div className="flex flex-wrap items-center space-x-4 mb-4">
         <div className="flex items-center space-x-2">
-          <span className="w-3 h-3 ml-6 rounded-full bg-[#3C50E0]"></span>
+          <span className="w-3 h-3 ml-6 rounded-full bg-[#006400]"></span>
           <span className="text-sm text-black">Coal Production</span>
         </div>
         <div className="flex items-center space-x-2">
-          <span className="w-3 h-3 rounded-full bg-[#80CAEE]"></span>
+          <span className="w-3 h-3 rounded-full bg-[#90EE90]"></span>
           <span className="text-sm text-black">Fuel Consumption</span>
         </div>
       </div>
