@@ -102,7 +102,7 @@ const ChartThree = () => {
       </div>
 
       <div className="mb-2">
-        <div id="chartThree" className="mx-auto flex justify-center">
+        <div id="chartThree" className="mx-auto flex justify-center overflow-hidden">
           <ReactApexChart
             options={options}
             series={state.series}

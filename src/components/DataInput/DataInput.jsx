@@ -107,24 +107,68 @@ const DataInput = () => {
           orientation="vertical"
           sx={{
             '& .MuiStepIcon-root': {
-              color: '#FFA500', // Default step color
-              '&.Mui-active': { color: '#FFA500' }, // Active step color
-              '&.Mui-completed': { color: '#32CD32' }, // Completed step color
+              color: '#FFA500',
+              transition: 'all 0.3s ease-in-out',
+              '&.Mui-active': { 
+                color: '#FFA500',
+                transform: 'scale(1.2)',
+              },
+              '&.Mui-completed': { 
+                color: '#32CD32',
+                animation: 'pulse 0.5s ease-in-out',
+              },
             },
             '& .MuiStepConnector-line': {
-              borderColor: '#32CD32',
-              borderWidth: '0 0 0 4px',
+              borderColor: '#E0E0E0',
+              borderWidth: '0 0 0 2px',
+              transition: 'all 0.4s ease-in-out',
             },
             '& .MuiStepConnector-root.Mui-active .MuiStepConnector-line': {
               borderColor: '#32CD32',
-              borderWidth: '0 0 0 4px',
+              borderWidth: '0 0 0 2px',
+              animation: 'slideDown 0.5s ease-in-out',
             },
             '& .MuiStepConnector-root.Mui-completed .MuiStepConnector-line': {
               borderColor: '#32CD32',
-              borderWidth: '0 0 0 4px',
+              borderWidth: '0 0 0 2px',
             },
-            '& .MuiStep-root:last-child .MuiStepConnector-root': {
-              display: 'none',
+            '& .MuiStepConnector-root': {
+              marginLeft: '12px',
+            },
+            '& .MuiStepConnector-root.Mui-disabled .MuiStepConnector-line': {
+              borderColor: '#E0E0E0',
+              borderWidth: '0 0 0 2px',
+            },
+            '@keyframes pulse': {
+              '0%': {
+                transform: 'scale(1)',
+              },
+              '50%': {
+                transform: 'scale(1.2)',
+              },
+              '100%': {
+                transform: 'scale(1)',
+              },
+            },
+            '@keyframes slideDown': {
+              '0%': {
+                height: '0%',
+                opacity: 0,
+              },
+              '100%': {
+                height: '100%',
+                opacity: 1,
+              },
+            },
+            '& .MuiStepLabel-label': {
+              transition: 'color 0.3s ease-in-out',
+              '&.Mui-active': {
+                color: '#FFA500',
+                fontWeight: 'bold',
+              },
+              '&.Mui-completed': {
+                color: '#32CD32',
+              },
             },
           }}
         >
