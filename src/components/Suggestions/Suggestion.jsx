@@ -2,21 +2,25 @@ import React, { useState, useEffect } from 'react';
 import GeneralSuggestions from './GeneralSuggestions';
 import PersonalizedSuggestions from './PersonalizedSuggestions';
 import OfficerSuggestions from './OfficerSuggestions';
+import SuggestionProgress from './SuggestionProgress';
 
 const Suggestions = ({ data }) => {
   const [selectedTab, setSelectedTab] = useState('general');
   const [filters, setFilters] = useState({
     category: 'all',
     priority: 'all',
-    timeframe: 'all'
+    timeframe: 'all',
+    status: 'all' // New filter for implementation status
   });
   const [isFilterExpanded, setIsFilterExpanded] = useState(false);
   const [activeFilter, setActiveFilter] = useState(null);
+  const [selectedSuggestion, setSelectedSuggestion] = useState(null);
 
   const filterOptions = {
     category: ['all', 'Carbon Emissions', 'Water Usage', 'Energy Efficiency', 'Waste Management'],
     priority: ['all', 'High', 'Medium', 'Low'],
-    timeframe: ['all', 'Short-term', 'Medium-term', 'Long-term']
+    timeframe: ['all', 'Short-term', 'Medium-term', 'Long-term'],
+    status: ['all', 'pending', 'in-progress', 'completed']
   };
 
   const filterIcons = {
@@ -38,6 +42,12 @@ const Suggestions = ({ data }) => {
       'Short-term': '⚡',
       'Medium-term': '⏳',
       'Long-term': '📅'
+    },
+    status: {
+      'all': '📊',
+      'pending': '⏳',
+      'in-progress': '🔄',
+      'completed': '✅'
     }
   };
 
@@ -48,20 +58,41 @@ const Suggestions = ({ data }) => {
         e.preventDefault();
         setIsFilterExpanded(prev => !prev);
       }
-      if (e.key === 'Escape' && isFilterExpanded) {
-        setIsFilterExpanded(false);
+      if (e.key === 'Escape') {
+        if (isFilterExpanded) {
+          setIsFilterExpanded(false);
+        }
+        if (selectedSuggestion) {
+          setSelectedSuggestion(null);
+        }
       }
     };
 
     window.addEventListener('keydown', handleKeyPress);
     return () => window.removeEventListener('keydown', handleKeyPress);
-  }, [isFilterExpanded]);
+  }, [isFilterExpanded, selectedSuggestion]);
 
   const handleFilterChange = (filterType, value) => {
     setFilters(prev => ({
       ...prev,
       [filterType]: value
     }));
+  };
+
+  const handleProgressUpdate = (suggestionId, progressData) => {
+    // Here you would typically update your backend
+    console.log('Updating progress for suggestion:', suggestionId, progressData);
+    
+    // Update local state or trigger a refetch of suggestions
+    // This is just an example - implement according to your data structure
+    const updatedSuggestions = data.map(suggestion => 
+      suggestion.id === suggestionId 
+        ? { ...suggestion, ...progressData }
+        : suggestion
+    );
+    
+    // Update your data store or trigger a refetch
+    // setData(updatedSuggestions);
   };
 
   const tabs = [
@@ -74,44 +105,72 @@ const Suggestions = ({ data }) => {
     return filterIcons[type]?.[value] || filterIcons[type]?.['all'];
   };
 
+  // Calculate overall progress
+  const calculateOverallProgress = () => {
+    if (!data || data.length === 0) return 0;
+    
+    const completedSuggestions = data.filter(s => s.status === 'completed').length;
+    const inProgressSuggestions = data.filter(s => s.status === 'in-progress').length;
+    
+    return Math.round((completedSuggestions + (inProgressSuggestions * 0.5)) / data.length * 100);
+  };
+
   return (
     <div className="p-6 rounded-lg shadow-md mt-8 ml-8">
       <h2 className="text-2xl font-bold mb-4 text-black">Emission Reduction Pathways</h2>
       
       {/* Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        <div className="bg-white p-4 rounded-lg border border-black shadow-lg transition-transform duration-500 ease-in-out transform hover:scale-105 hover:shadow-2xl">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-600">Current Emission Level</p>
-              <p className="text-2xl font-bold text-black">75%</p>
-            </div>
-            <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
-              <span className="text-xl">📈</span>
-            </div>
-          </div>
-        </div>
-        
-        <div className="bg-white p-4 rounded-lg border border-black shadow-lg transition-transform duration-500 ease-in-out transform hover:scale-105 hover:shadow-2xl">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-600">Target Reduction</p>
-              <p className="text-2xl font-bold text-black">25%</p>
-            </div>
-            <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
-              <span className="text-xl">🎯</span>
-            </div>
-          </div>
-        </div>
-        
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
         <div className="bg-white p-4 rounded-lg border border-black shadow-lg transition-transform duration-500 ease-in-out transform hover:scale-105 hover:shadow-2xl">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600">Implementation Progress</p>
-              <p className="text-2xl font-bold text-black">60%</p>
+              <p className="text-2xl font-bold text-black">{calculateOverallProgress()}%</p>
             </div>
             <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-              <span className="text-xl">⚡</span>
+              <span className="text-xl">📊</span>
+            </div>
+          </div>
+        </div>
+        
+        <div className="bg-white p-4 rounded-lg border border-black shadow-lg transition-transform duration-500 ease-in-out transform hover:scale-105 hover:shadow-2xl">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-gray-600">Completed Suggestions</p>
+              <p className="text-2xl font-bold text-black">
+                {data?.filter(s => s.status === 'completed').length || 0}
+              </p>
+            </div>
+            <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+              <span className="text-xl">✅</span>
+            </div>
+          </div>
+        </div>
+        
+        <div className="bg-white p-4 rounded-lg border border-black shadow-lg transition-transform duration-500 ease-in-out transform hover:scale-105 hover:shadow-2xl">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-gray-600">In Progress</p>
+              <p className="text-2xl font-bold text-black">
+                {data?.filter(s => s.status === 'in-progress').length || 0}
+              </p>
+            </div>
+            <div className="w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center">
+              <span className="text-xl">🔄</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white p-4 rounded-lg border border-black shadow-lg transition-transform duration-500 ease-in-out transform hover:scale-105 hover:shadow-2xl">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-gray-600">Pending</p>
+              <p className="text-2xl font-bold text-black">
+                {data?.filter(s => s.status === 'pending').length || 0}
+              </p>
+            </div>
+            <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center">
+              <span className="text-xl">⏳</span>
             </div>
           </div>
         </div>
@@ -180,6 +239,7 @@ const Suggestions = ({ data }) => {
                     <div className={`mt-1 h-px bg-gradient-to-r from-transparent ${
                       type === 'category' ? 'via-blue-400' :
                       type === 'priority' ? 'via-purple-400' :
+                      type === 'status' ? 'via-green-400' :
                       'via-green-400'
                     } to-transparent transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300`}></div>
                   </div>
@@ -217,6 +277,29 @@ const Suggestions = ({ data }) => {
         {selectedTab === 'personalized' && <PersonalizedSuggestions data={data} filters={filters} />}
         {selectedTab === 'officer' && <OfficerSuggestions filters={filters} />}
       </div>
+
+      {/* Progress Tracking Modal */}
+      {selectedSuggestion && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+          <div className="bg-white rounded-lg w-full max-w-4xl max-h-[90vh] overflow-y-auto m-4">
+            <div className="sticky top-0 bg-white p-4 border-b flex justify-between items-center">
+              <h3 className="text-lg font-semibold">Update Progress</h3>
+              <button
+                onClick={() => setSelectedSuggestion(null)}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                ×
+              </button>
+            </div>
+            <div className="p-4">
+              <SuggestionProgress
+                suggestion={selectedSuggestion}
+                onProgressUpdate={(progressData) => handleProgressUpdate(selectedSuggestion.id, progressData)}
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

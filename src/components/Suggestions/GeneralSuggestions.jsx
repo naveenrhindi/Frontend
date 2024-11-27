@@ -3,47 +3,147 @@ import React from 'react';
 const GeneralSuggestions = ({ filters }) => {
   const suggestions = [
     {
+      title: "Install Solar Panels",
+      description: "Install rooftop solar panels to reduce grid electricity consumption.",
+      icon: "https://img.icons8.com/color/48/solar-panel.png",
+      priority: "High",
+      category: "Energy Efficiency",
+      timeframe: "Medium-term",
+      status: "pending"
+    },
+    {
+      title: "Water Recycling System",
+      description: "Implement water recycling system for industrial processes.",
+      icon: "https://img.icons8.com/color/48/water.png",
+      priority: "High",
+      category: "Water Usage",
+      timeframe: "Short-term",
+      status: "in-progress"
+    },
+    {
+      title: "Smart Waste Management",
+      description: "Deploy smart bins and waste segregation system.",
+      icon: "https://img.icons8.com/color/48/waste.png",
+      priority: "Medium",
+      category: "Waste Management",
+      timeframe: "Short-term",
+      status: "completed"
+    },
+    {
+      title: "Carbon Capture System",
+      description: "Install carbon capture technology in manufacturing units.",
+      icon: "https://img.icons8.com/color/48/co2.png",
+      priority: "High",
+      category: "Carbon Emissions",
+      timeframe: "Long-term",
+      status: "pending"
+    },
+    {
+      title: "LED Lighting Upgrade",
+      description: "Replace all traditional lighting with LED systems.",
+      icon: "https://img.icons8.com/color/48/light.png",
+      priority: "Low",
+      category: "Energy Efficiency",
+      timeframe: "Short-term",
+      status: "completed"
+    },
+    {
+      title: "Rainwater Harvesting",
+      description: "Install rainwater harvesting systems across facilities.",
+      icon: "https://img.icons8.com/color/48/rain.png",
+      priority: "Medium",
+      category: "Water Usage",
+      timeframe: "Medium-term",
+      status: "in-progress"
+    },
+    {
+      title: "Composting Program",
+      description: "Start organic waste composting program.",
+      icon: "https://img.icons8.com/color/48/compost.png",
+      priority: "Low",
+      category: "Waste Management",
+      timeframe: "Short-term",
+      status: "pending"
+    },
+    {
+      title: "Electric Vehicle Fleet",
+      description: "Transition company vehicles to electric alternatives.",
+      icon: "https://img.icons8.com/color/48/electric-car.png",
+      priority: "Medium",
+      category: "Carbon Emissions",
+      timeframe: "Long-term",
+      status: "in-progress"
+    },
+    {
       title: "Employee Training",
       description: "Enhance employee training programs for sustainability practices.",
       icon: "https://img.icons8.com/color/48/training.png",
       priority: "High",
-      category: "Environmental"
+      category: "Environmental",
+      timeframe: "Medium-term",
+      status: "pending"
     },
     {
       title: "Community Engagement",
       description: "Engage with local communities to improve environmental efforts.",
       icon: "https://img.icons8.com/color/48/conference-call--v1.png",
       priority: "Medium",
-      category: "Environmental"
+      category: "Environmental",
+      timeframe: "Long-term",
+      status: "in-progress"
     },
     {
       title: "Environmental Certification",
       description: "Consider obtaining environmental certifications to demonstrate commitment.",
       icon: "https://img.icons8.com/color/48/certificate.png",
       priority: "High",
-      category: "Environmental"
+      category: "Environmental",
+      timeframe: "Medium-term",
+      status: "pending"
     },
     {
       title: "Partnerships",
       description: "Explore partnerships with environmental organizations for better practices.",
       icon: "https://img.icons8.com/color/48/handshake.png",
       priority: "Medium",
-      category: "Environmental"
+      category: "Environmental",
+      timeframe: "Long-term",
+      status: "in-progress"
     },
     {
       title: "Regulatory Compliance",
       description: "Stay updated with new regulations and compliance requirements.",
       icon: "https://img.icons8.com/color/48/law.png",
       priority: "High",
-      category: "Environmental"
+      category: "Environmental",
+      timeframe: "Short-term",
+      status: "completed"
     }
   ];
 
   const filteredSuggestions = suggestions.filter(suggestion => {
     const categoryMatch = filters.category === 'all' || suggestion.category === filters.category;
     const priorityMatch = filters.priority === 'all' || suggestion.priority === filters.priority;
-    return categoryMatch && priorityMatch;
+    const timeframeMatch = filters.timeframe === 'all' || suggestion.timeframe === filters.timeframe;
+    const statusMatch = filters.status === 'all' || suggestion.status === filters.status;
+    return categoryMatch && priorityMatch && timeframeMatch && statusMatch;
   });
+
+  const getStatusColor = (status) => {
+    switch (status) {
+      case 'completed': return 'bg-green-100 text-green-800';
+      case 'in-progress': return 'bg-blue-100 text-blue-800';
+      default: return 'bg-gray-100 text-gray-800';
+    }
+  };
+
+  const getStatusIcon = (status) => {
+    switch (status) {
+      case 'completed': return '✅';
+      case 'in-progress': return '🔄';
+      default: return '⏳';
+    }
+  };
 
   return (
     <div className="space-y-4">
@@ -67,17 +167,32 @@ const GeneralSuggestions = ({ filters }) => {
                 <img src={suggestion.icon} alt={suggestion.title} className="w-8 h-8"/>
               </div>
               <div className="flex-1">
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between mb-2">
                   <h4 className="text-lg font-semibold text-black">{suggestion.title}</h4>
-                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                    suggestion.priority === 'High' 
-                      ? 'bg-red-100 text-red-800' 
-                      : 'bg-yellow-100 text-yellow-800'
-                  }`}>
-                    {suggestion.priority} Priority
+                  <div className="flex items-center space-x-2">
+                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(suggestion.status)}`}>
+                      {getStatusIcon(suggestion.status)} {suggestion.status}
+                    </span>
+                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                      suggestion.priority === 'High' 
+                        ? 'bg-red-100 text-red-800' 
+                        : suggestion.priority === 'Medium'
+                        ? 'bg-yellow-100 text-yellow-800'
+                        : 'bg-green-100 text-green-800'
+                    }`}>
+                      {suggestion.priority} Priority
+                    </span>
+                  </div>
+                </div>
+                <p className="text-gray-600 mb-2">{suggestion.description}</p>
+                <div className="flex flex-wrap gap-2">
+                  <span className="px-2 py-1 rounded-full bg-blue-100 text-blue-800 text-xs">
+                    {suggestion.category}
+                  </span>
+                  <span className="px-2 py-1 rounded-full bg-purple-100 text-purple-800 text-xs">
+                    {suggestion.timeframe}
                   </span>
                 </div>
-                <p className="text-gray-600 mt-1">{suggestion.description}</p>
               </div>
             </div>
           </div>
