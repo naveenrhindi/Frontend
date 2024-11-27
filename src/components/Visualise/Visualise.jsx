@@ -89,7 +89,7 @@ const Visualization = () => {
         <div className="col-span-2">
           <ChartTwo />
         </div>
-        <div className="col-span-1">
+        <div className="col-span-1 mb-4">
           <ChartThree />
         </div>
       </div>

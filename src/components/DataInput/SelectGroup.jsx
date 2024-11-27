@@ -5,12 +5,19 @@ const SelectGroup = ({ label, options, onChange }) => {
     <div className="mb-4">
       <label className="block text-gray-700 dark:text-gray-300 mb-2">{label}</label>
       <select
-        className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 hover:bg-blue-100 dark:hover:bg-blue-100"
+        className="w-full p-2 border border-gray-300 rounded 
+        bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 
+        focus:outline-none focus:ring-2 focus:ring-[#FFA500] 
+        focus:border-[#FFA500] hover:border-[#FFA500]" // Orange border on focus/hover
         onChange={(e) => onChange(e.target.value)}
       >
         <option value="" disabled>Select {label.toLowerCase()}</option>
         {options.map((option, index) => (
-          <option key={index} value={option}>
+          <option
+            key={index}
+            value={option}
+            className="hover:bg-[#FFA500]/10" // Light orange background on hover
+          >
             {option}
           </option>
         ))}

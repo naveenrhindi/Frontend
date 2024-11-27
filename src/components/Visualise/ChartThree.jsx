@@ -1,14 +1,14 @@
-import React, { useState } from "react";
-import ReactApexChart from "react-apexcharts";
+import React, { useState } from 'react';
+import ReactApexChart from 'react-apexcharts';
 
 const options = {
   chart: {
-    fontFamily: "Satoshi, sans-serif",
-    type: "donut",
-    background: "#ffffff",
+    fontFamily: 'Satoshi, sans-serif',
+    type: 'donut',
+    background: '#ffffff', // Background color for the chart
     dropShadow: {
       enabled: true,
-      color: "#623CEA14",
+      color: '#623CEA14',
       top: 10,
       blur: 4,
       opacity: 0.1,
@@ -20,17 +20,17 @@ const options = {
       right: 10,
     },
   },
-  colors: ["#006400", "#90EE90", "#32CD32", "#228B22"], // Dark to light green palette
-  labels: ["CO2", "Methane", "SO2", "Particulate Matter"],
+  colors: ['#006400', '#90EE90', '#FFA500', '#228B22'], // Dark green, light green, orange, and green
+  labels: ['CO2', 'Methane', 'SO2', 'Particulate Matter'],
   legend: {
     show: false,
-    position: "bottom",
+    position: 'bottom',
   },
   plotOptions: {
     pie: {
       donut: {
-        size: "60%", // Reduced size to make the border more visible
-        background: "transparent",
+        size: '60%', // Adjusted size to improve border visibility
+        background: 'transparent',
       },
     },
   },
@@ -40,12 +40,12 @@ const options = {
   stroke: {
     show: true,
     width: 3, // Increased width for better visibility
-    colors: ["#ffffff"], // White border
+    colors: ['#ffffff'], // White border
   },
   states: {
     hover: {
       filter: {
-        type: "none", // No dimming effect to keep borders consistent
+        type: 'none', // No dimming effect to keep borders consistent
       },
     },
   },
@@ -75,8 +75,8 @@ const ChartThree = () => {
   });
 
   return (
-    <div className="col-span-12 rounded-lg border border-black bg-white p-4 shadow-lg transition-transform duration-500 ease-in-out transform hover:scale-105 hover:shadow-2xl xl:col-span-5">
-      <div className="mb-3 flex justify-between gap-4">
+    <div className="col-span-12  rounded-lg border border-black bg-white p-4 shadow-lg transition-transform duration-500 ease-in-out transform hover:scale-105 hover:shadow-2xl xl:col-span-5">
+      <div className="mb-5 flex justify-between gap-4">
         <div>
           <h5 className="text-xl font-semibold text-black mb-3">
             Emissions Analytics - Coal Mine Process
