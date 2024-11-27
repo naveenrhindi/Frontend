@@ -15,7 +15,7 @@ const GeneralSuggestions = ({ filters }) => {
       title: "Water Recycling System",
       description: "Implement water recycling system for industrial processes.",
       icon: "https://img.icons8.com/color/48/water.png",
-      priority: "High",
+      priority: "Medium",
       category: "Water Usage",
       timeframe: "Short-term",
       status: "in-progress"
@@ -24,7 +24,7 @@ const GeneralSuggestions = ({ filters }) => {
       title: "Smart Waste Management",
       description: "Deploy smart bins and waste segregation system.",
       icon: "https://img.icons8.com/color/48/waste.png",
-      priority: "Medium",
+      priority: "Low",
       category: "Waste Management",
       timeframe: "Short-term",
       status: "completed"
@@ -69,7 +69,7 @@ const GeneralSuggestions = ({ filters }) => {
       title: "Electric Vehicle Fleet",
       description: "Transition company vehicles to electric alternatives.",
       icon: "https://img.icons8.com/color/48/electric-car.png",
-      priority: "Medium",
+      priority: "High",
       category: "Carbon Emissions",
       timeframe: "Long-term",
       status: "in-progress"
@@ -78,7 +78,7 @@ const GeneralSuggestions = ({ filters }) => {
       title: "Employee Training",
       description: "Enhance employee training programs for sustainability practices.",
       icon: "https://img.icons8.com/color/48/training.png",
-      priority: "High",
+      priority: "Medium",
       category: "Environmental",
       timeframe: "Medium-term",
       status: "pending"
@@ -87,7 +87,7 @@ const GeneralSuggestions = ({ filters }) => {
       title: "Community Engagement",
       description: "Engage with local communities to improve environmental efforts.",
       icon: "https://img.icons8.com/color/48/conference-call--v1.png",
-      priority: "Medium",
+      priority: "Low",
       category: "Environmental",
       timeframe: "Long-term",
       status: "in-progress"
@@ -96,7 +96,7 @@ const GeneralSuggestions = ({ filters }) => {
       title: "Environmental Certification",
       description: "Consider obtaining environmental certifications to demonstrate commitment.",
       icon: "https://img.icons8.com/color/48/certificate.png",
-      priority: "High",
+      priority: "Medium",
       category: "Environmental",
       timeframe: "Medium-term",
       status: "pending"
@@ -105,7 +105,7 @@ const GeneralSuggestions = ({ filters }) => {
       title: "Partnerships",
       description: "Explore partnerships with environmental organizations for better practices.",
       icon: "https://img.icons8.com/color/48/handshake.png",
-      priority: "Medium",
+      priority: "High",
       category: "Environmental",
       timeframe: "Long-term",
       status: "in-progress"
@@ -123,25 +123,31 @@ const GeneralSuggestions = ({ filters }) => {
 
   const filteredSuggestions = suggestions.filter(suggestion => {
     const categoryMatch = filters.category === 'all' || suggestion.category === filters.category;
+    const statusMatch = filters.status === 'all' || suggestion.status === filters.status;
     const priorityMatch = filters.priority === 'all' || suggestion.priority === filters.priority;
     const timeframeMatch = filters.timeframe === 'all' || suggestion.timeframe === filters.timeframe;
-    const statusMatch = filters.status === 'all' || suggestion.status === filters.status;
-    return categoryMatch && priorityMatch && timeframeMatch && statusMatch;
+    return categoryMatch && statusMatch && priorityMatch && timeframeMatch;
   });
 
   const getStatusColor = (status) => {
     switch (status) {
-      case 'completed': return 'bg-green-100 text-green-800';
-      case 'in-progress': return 'bg-blue-100 text-blue-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'completed':
+        return 'bg-green-100 text-green-800';
+      case 'in-progress':
+        return 'bg-blue-100 text-blue-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
     }
   };
 
   const getStatusIcon = (status) => {
     switch (status) {
-      case 'completed': return '✅';
-      case 'in-progress': return '🔄';
-      default: return '⏳';
+      case 'completed':
+        return '✅';
+      case 'in-progress':
+        return '🔄';
+      default:
+        return '⏳';
     }
   };
 
