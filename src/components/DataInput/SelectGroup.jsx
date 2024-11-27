@@ -7,8 +7,8 @@ const SelectGroup = ({ label, options, onChange }) => {
       <select
         className="w-full p-2 border border-gray-300 rounded 
         bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 
-        focus:outline-none focus:ring-2 focus:ring-[#FFA500] 
-        focus:border-[#FFA500] hover:border-[#FFA500]" // Orange border on focus/hover
+        focus:outline-none focus:ring-1 focus:ring-[#FFA500] 
+        focus:border-[#FFA500] hover:border-[#FFA500]"
         onChange={(e) => onChange(e.target.value)}
       >
         <option value="" disabled>Select {label.toLowerCase()}</option>
@@ -16,7 +16,7 @@ const SelectGroup = ({ label, options, onChange }) => {
           <option
             key={index}
             value={option}
-            className="hover:bg-[#FFA500]/10" // Light orange background on hover
+            className="hover:bg-[#FFA500]/10"
           >
             {option}
           </option>

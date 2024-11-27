@@ -111,7 +111,21 @@ const DataInput = () => {
               '&.Mui-active': { color: '#FFA500' }, // Active step color
               '&.Mui-completed': { color: '#32CD32' }, // Completed step color
             },
-            '& .MuiStepConnector-line': { borderColor: '#FFA500' }, // Orange connector line
+            '& .MuiStepConnector-line': {
+              borderColor: '#32CD32',
+              borderWidth: '0 0 0 4px',
+            },
+            '& .MuiStepConnector-root.Mui-active .MuiStepConnector-line': {
+              borderColor: '#32CD32',
+              borderWidth: '0 0 0 4px',
+            },
+            '& .MuiStepConnector-root.Mui-completed .MuiStepConnector-line': {
+              borderColor: '#32CD32',
+              borderWidth: '0 0 0 4px',
+            },
+            '& .MuiStep-root:last-child .MuiStepConnector-root': {
+              display: 'none',
+            },
           }}
         >
           {steps.map((step, index) => (
@@ -122,29 +136,35 @@ const DataInput = () => {
                 <Box sx={{ mb: 2 }}>
                   <div>
                     <Button
-                      variant="contained"
+                      variant="outlined"
                       onClick={index === steps.length - 1 ? handleSubmit : handleNext}
                       sx={{
                         mt: 1,
                         mr: 1,
-                        bgcolor: '#FFA500', // Orange
+                        color: '#32CD32',
+                        borderColor: '#32CD32',
                         '&:hover': {
-                          bgcolor: '#FFD9B3', // Lighter orange
+                          bgcolor: '#32CD32',
+                          borderColor: '#32CD32',
+                          color: 'white',
                         },
                       }}
                     >
                       {index === steps.length - 1 ? 'Submit' : 'Continue'}
                     </Button>
                     <Button
+                      variant="text"
                       disabled={index === 0}
                       onClick={handleBack}
                       sx={{
                         mt: 1,
                         mr: 1,
-                        color: '#FFA500', // Orange text
-                        border: '1px solid #FFA500', // Orange border
+                        color: '#FFA500',
                         '&:hover': {
-                          bgcolor: 'rgba(255, 165, 0, 0.1)', // Light orange hover
+                          bgcolor: 'rgba(255, 165, 0, 0.04)',
+                        },
+                        '&.Mui-disabled': {
+                          color: 'rgba(255, 165, 0, 0.4)',
                         },
                       }}
                     >
@@ -170,13 +190,16 @@ const DataInput = () => {
               All steps completed - Data has been submitted!
             </Typography>
             <Button
+              variant="outlined"
               onClick={handleReset}
               sx={{
                 mt: 1,
                 mr: 1,
-                color: '#32CD32', // Green text
+                color: '#32CD32',
+                borderColor: '#32CD32',
                 '&:hover': {
-                  bgcolor: 'rgba(50, 205, 50, 0.1)', // Light green hover
+                  bgcolor: 'rgba(50, 205, 50, 0.04)',
+                  borderColor: '#32CD32',
                 },
               }}
             >
