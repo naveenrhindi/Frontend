@@ -1,209 +1,314 @@
-import React from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
+import useSuggestionStore from '../../store/suggestionStore';
 
 const GeneralSuggestions = ({ filters }) => {
+  const [viewMode, setViewMode] = useState('grid');
+  const [sortBy, setSortBy] = useState('category');
+  const getSuggestion = useSuggestionStore(state => state.getSuggestion);
+
   const suggestions = [
     {
-      title: "Install Solar Panels",
-      description: "Install rooftop solar panels to reduce grid electricity consumption.",
-      icon: "https://img.icons8.com/color/48/solar-panel.png",
-      priority: "High",
-      category: "Energy Efficiency",
-      timeframe: "Medium-term",
-      status: "pending"
-    },
-    {
-      title: "Water Recycling System",
-      description: "Implement water recycling system for industrial processes.",
-      icon: "https://img.icons8.com/color/48/water.png",
-      priority: "Medium",
-      category: "Water Usage",
-      timeframe: "Short-term",
-      status: "in-progress"
-    },
-    {
-      title: "Smart Waste Management",
-      description: "Deploy smart bins and waste segregation system.",
-      icon: "https://img.icons8.com/color/48/waste.png",
-      priority: "Low",
-      category: "Waste Management",
-      timeframe: "Short-term",
-      status: "completed"
-    },
-    {
-      title: "Carbon Capture System",
-      description: "Install carbon capture technology in manufacturing units.",
-      icon: "https://img.icons8.com/color/48/co2.png",
-      priority: "High",
-      category: "Carbon Emissions",
+      id: 'g1',
+      title: "Energy Conservation",
+      description: "Implement energy-saving practices in mining operations to reduce carbon footprint.",
+      icon: "/icons/smart-meter.svg",
+      category: "Energy",
+      impact: "High",
       timeframe: "Long-term",
-      status: "pending"
+      difficulty: "Medium"
     },
     {
-      title: "LED Lighting Upgrade",
-      description: "Replace all traditional lighting with LED systems.",
-      icon: "https://img.icons8.com/color/48/light.png",
-      priority: "Low",
-      category: "Energy Efficiency",
-      timeframe: "Short-term",
-      status: "completed"
-    },
-    {
-      title: "Rainwater Harvesting",
-      description: "Install rainwater harvesting systems across facilities.",
-      icon: "https://img.icons8.com/color/48/rain.png",
-      priority: "Medium",
-      category: "Water Usage",
+      id: 'g2',
+      title: "Water Management",
+      description: "Develop water recycling systems for mining processes to minimize water wastage.",
+      icon: "/icons/process-optimization.svg",
+      category: "Water",
+      impact: "High",
       timeframe: "Medium-term",
-      status: "in-progress"
+      difficulty: "High"
     },
     {
-      title: "Composting Program",
-      description: "Start organic waste composting program.",
-      icon: "https://img.icons8.com/color/48/compost.png",
-      priority: "Low",
-      category: "Waste Management",
+      id: 'g3',
+      title: "Waste Reduction",
+      description: "Implement comprehensive waste management and recycling programs.",
+      icon: "/icons/waste-heat-recovery.svg",
+      category: "Waste",
+      impact: "Medium",
       timeframe: "Short-term",
-      status: "pending"
+      difficulty: "Low"
     },
     {
-      title: "Electric Vehicle Fleet",
-      description: "Transition company vehicles to electric alternatives.",
-      icon: "https://img.icons8.com/color/48/electric-car.png",
-      priority: "High",
-      category: "Carbon Emissions",
+      id: 'g4',
+      title: "Green Technology",
+      description: "Adopt renewable energy sources for mining operations.",
+      icon: "/icons/training.svg",
+      category: "Technology",
+      impact: "High",
       timeframe: "Long-term",
-      status: "in-progress"
+      difficulty: "High"
     },
     {
-      title: "Employee Training",
-      description: "Enhance employee training programs for sustainability practices.",
-      icon: "https://img.icons8.com/color/48/training.png",
-      priority: "Medium",
-      category: "Environmental",
+      id: 'g5',
+      title: "Biodiversity Protection",
+      description: "Establish protected areas and wildlife corridors around mining sites.",
+      icon: "/icons/local-sourcing.svg",
+      category: "Environment",
+      impact: "Medium",
       timeframe: "Medium-term",
-      status: "pending"
-    },
-    {
-      title: "Community Engagement",
-      description: "Engage with local communities to improve environmental efforts.",
-      icon: "https://img.icons8.com/color/48/conference-call--v1.png",
-      priority: "Low",
-      category: "Environmental",
-      timeframe: "Long-term",
-      status: "in-progress"
-    },
-    {
-      title: "Environmental Certification",
-      description: "Consider obtaining environmental certifications to demonstrate commitment.",
-      icon: "https://img.icons8.com/color/48/certificate.png",
-      priority: "Medium",
-      category: "Environmental",
-      timeframe: "Medium-term",
-      status: "pending"
-    },
-    {
-      title: "Partnerships",
-      description: "Explore partnerships with environmental organizations for better practices.",
-      icon: "https://img.icons8.com/color/48/handshake.png",
-      priority: "High",
-      category: "Environmental",
-      timeframe: "Long-term",
-      status: "in-progress"
-    },
-    {
-      title: "Regulatory Compliance",
-      description: "Stay updated with new regulations and compliance requirements.",
-      icon: "https://img.icons8.com/color/48/law.png",
-      priority: "High",
-      category: "Environmental",
-      timeframe: "Short-term",
-      status: "completed"
+      difficulty: "Medium"
     }
   ];
 
-  const filteredSuggestions = suggestions.filter(suggestion => {
-    const categoryMatch = filters.category === 'all' || suggestion.category === filters.category;
-    const statusMatch = filters.status === 'all' || suggestion.status === filters.status;
-    const priorityMatch = filters.priority === 'all' || suggestion.priority === filters.priority;
-    const timeframeMatch = filters.timeframe === 'all' || suggestion.timeframe === filters.timeframe;
-    return categoryMatch && statusMatch && priorityMatch && timeframeMatch;
-  });
-
-  const getStatusColor = (status) => {
-    switch (status) {
-      case 'completed':
-        return 'bg-green-100 text-green-800';
-      case 'in-progress':
+  const getCategoryColor = (category) => {
+    switch (category.toLowerCase()) {
+      case 'energy':
+        return 'bg-yellow-100 text-yellow-800';
+      case 'water':
         return 'bg-blue-100 text-blue-800';
+      case 'waste':
+        return 'bg-green-100 text-green-800';
+      case 'technology':
+        return 'bg-purple-100 text-purple-800';
+      case 'environment':
+        return 'bg-emerald-100 text-emerald-800';
       default:
         return 'bg-gray-100 text-gray-800';
     }
   };
 
-  const getStatusIcon = (status) => {
-    switch (status) {
-      case 'completed':
-        return '✅';
-      case 'in-progress':
-        return '🔄';
+  const getImpactColor = (impact) => {
+    switch (impact.toLowerCase()) {
+      case 'high':
+        return 'text-red-500';
+      case 'medium':
+        return 'text-orange-500';
+      case 'low':
+        return 'text-green-500';
       default:
-        return '⏳';
+        return 'text-gray-500';
     }
   };
 
-  return (
-    <div className="space-y-4">
-      {filteredSuggestions.length === 0 ? (
-        <div className="text-center p-8">
-          <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
-            <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-            </svg>
-          </div>
-          <p className="text-gray-600">No suggestions match your current filters</p>
-        </div>
-      ) : (
-        filteredSuggestions.map((suggestion, index) => (
+  const getDifficultyColor = (difficulty) => {
+    switch (difficulty.toLowerCase()) {
+      case 'high':
+        return 'bg-red-100 text-red-800';
+      case 'medium':
+        return 'bg-orange-100 text-orange-800';
+      case 'low':
+        return 'bg-green-100 text-green-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
+    }
+  };
+
+  const getTimeframeColor = (timeframe) => {
+    switch (timeframe.toLowerCase()) {
+      case 'short-term':
+        return 'bg-green-100 text-green-800';
+      case 'medium-term':
+        return 'bg-blue-100 text-blue-800';
+      case 'long-term':
+        return 'bg-purple-100 text-purple-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
+    }
+  };
+
+  const sortedAndFilteredSuggestions = useMemo(() => {
+    let filtered = suggestions.filter(suggestion => {
+      if (!filters) return true;
+      const categoryMatch = !filters.category || filters.category === 'all' || suggestion.category === filters.category;
+      return categoryMatch;
+    });
+
+    return filtered.sort((a, b) => {
+      switch (sortBy) {
+        case 'impact':
+          const impactOrder = { high: 3, medium: 2, low: 1 };
+          return impactOrder[b.impact.toLowerCase()] - impactOrder[a.impact.toLowerCase()];
+        case 'difficulty':
+          const difficultyOrder = { high: 3, medium: 2, low: 1 };
+          return difficultyOrder[a.difficulty.toLowerCase()] - difficultyOrder[b.difficulty.toLowerCase()];
+        case 'timeframe':
+          const timeframeOrder = { 'short-term': 1, 'medium-term': 2, 'long-term': 3 };
+          return timeframeOrder[a.timeframe.toLowerCase()] - timeframeOrder[b.timeframe.toLowerCase()];
+        case 'category':
+        default:
+          return a.category.localeCompare(b.category);
+      }
+    });
+  }, [filters, sortBy]);
+
+  const renderGridView = () => (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {sortedAndFilteredSuggestions.map((suggestion) => {
+        const savedData = getSuggestion(suggestion.id);
+        const progress = savedData?.progress || 0;
+        const status = savedData?.status || 'pending';
+
+        return (
           <div
-            key={index}
-            className="bg-white p-4 rounded-lg border border-black shadow-sm hover:shadow-md transition-all duration-300"
+            key={suggestion.id}
+            className="group relative bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden cursor-pointer border border-gray-100"
           >
-            <div className="flex items-start space-x-4">
-              <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center flex-shrink-0">
-                <img src={suggestion.icon} alt={suggestion.title} className="w-8 h-8"/>
+            {/* Impact Indicator */}
+            <div className={`absolute top-0 right-0 w-16 h-16 ${getImpactColor(suggestion.impact)}`}>
+              <div className="absolute transform rotate-45 bg-current text-white text-xs font-bold py-1 right-[-35px] top-[32px] w-[170px] text-center">
+                {suggestion.impact} Impact
               </div>
-              <div className="flex-1">
-                <div className="flex items-center justify-between mb-2">
-                  <h4 className="text-lg font-semibold text-black">{suggestion.title}</h4>
-                  <div className="flex items-center space-x-2">
-                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(suggestion.status)}`}>
-                      {getStatusIcon(suggestion.status)} {suggestion.status}
+            </div>
+
+            <div className="p-6">
+              {/* Header */}
+              <div className="flex items-start space-x-4">
+                <div className="w-12 h-12 rounded-lg bg-gray-50 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
+                  <img 
+                    src={suggestion.icon} 
+                    alt="" 
+                    className="w-8 h-8"
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = '/icons/default-suggestion.svg';
+                    }}
+                  />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h3 className="text-lg font-semibold text-gray-900 truncate group-hover:text-black">
+                    {suggestion.title}
+                  </h3>
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getCategoryColor(suggestion.category)}`}>
+                      {suggestion.category}
                     </span>
-                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                      suggestion.priority === 'High' 
-                        ? 'bg-red-100 text-red-800' 
-                        : suggestion.priority === 'Medium'
-                        ? 'bg-yellow-100 text-yellow-800'
-                        : 'bg-green-100 text-green-800'
-                    }`}>
-                      {suggestion.priority} Priority
+                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getTimeframeColor(suggestion.timeframe)}`}>
+                      {suggestion.timeframe}
+                    </span>
+                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getDifficultyColor(suggestion.difficulty)}`}>
+                      {suggestion.difficulty} Difficulty
                     </span>
                   </div>
                 </div>
-                <p className="text-gray-600 mb-2">{suggestion.description}</p>
-                <div className="flex flex-wrap gap-2">
-                  <span className="px-2 py-1 rounded-full bg-blue-100 text-blue-800 text-xs">
-                    {suggestion.category}
-                  </span>
-                  <span className="px-2 py-1 rounded-full bg-purple-100 text-purple-800 text-xs">
-                    {suggestion.timeframe}
-                  </span>
-                </div>
+              </div>
+
+              {/* Description */}
+              <p className="mt-4 text-sm text-gray-600 line-clamp-2">
+                {suggestion.description}
+              </p>
+
+              {/* Implementation Tips */}
+              <div className="mt-4 p-3 bg-gray-50 rounded-lg">
+                <h4 className="text-sm font-medium text-gray-900 mb-2">Implementation Tips</h4>
+                <ul className="text-sm text-gray-600 space-y-1">
+                  <li>• Research best practices</li>
+                  <li>• Create implementation timeline</li>
+                  <li>• Monitor progress regularly</li>
+                </ul>
               </div>
             </div>
           </div>
-        ))
-      )}
+        );
+      })}
+    </div>
+  );
+
+  const renderListView = () => (
+    <div className="space-y-4">
+      {sortedAndFilteredSuggestions.map((suggestion) => (
+        <div
+          key={suggestion.id}
+          className="group bg-white rounded-lg shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer border border-gray-100"
+        >
+          <div className="p-4 flex items-center space-x-4">
+            {/* Icon and Title */}
+            <div className="w-10 h-10 rounded-lg bg-gray-50 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
+              <img 
+                src={suggestion.icon} 
+                alt="" 
+                className="w-6 h-6"
+                onError={(e) => {
+                  e.target.onerror = null;
+                  e.target.src = '/icons/default-suggestion.svg';
+                }}
+              />
+            </div>
+            
+            {/* Main Content */}
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center justify-between">
+                <h3 className="text-base font-semibold text-gray-900 group-hover:text-black">
+                  {suggestion.title}
+                </h3>
+                <div className="flex items-center space-x-2">
+                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${getCategoryColor(suggestion.category)}`}>
+                    {suggestion.category}
+                  </span>
+                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${getImpactColor(suggestion.impact)} bg-opacity-10`}>
+                    {suggestion.impact} Impact
+                  </span>
+                </div>
+              </div>
+              
+              {/* Additional Info */}
+              <div className="mt-1 flex items-center space-x-4">
+                <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${getTimeframeColor(suggestion.timeframe)}`}>
+                  {suggestion.timeframe}
+                </span>
+                <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${getDifficultyColor(suggestion.difficulty)}`}>
+                  {suggestion.difficulty} Difficulty
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+
+  return (
+    <div className="bg-white p-6 rounded-lg shadow-sm">
+      {/* Controls */}
+      <div className="mb-6 flex justify-between items-center">
+        <div className="flex items-center space-x-4">
+          <button
+            onClick={() => setViewMode('grid')}
+            className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+              viewMode === 'grid' 
+                ? 'bg-gray-900 text-white' 
+                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+            }`}
+          >
+            Grid View
+          </button>
+          <button
+            onClick={() => setViewMode('list')}
+            className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+              viewMode === 'list' 
+                ? 'bg-gray-900 text-white' 
+                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+            }`}
+          >
+            List View
+          </button>
+        </div>
+
+        <div className="flex items-center space-x-2">
+          <span className="text-sm text-gray-500">Sort by:</span>
+          <select
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value)}
+            className="text-sm border-gray-200 rounded-lg focus:ring-black focus:border-black"
+          >
+            <option value="category">Category</option>
+            <option value="impact">Impact</option>
+            <option value="difficulty">Difficulty</option>
+            <option value="timeframe">Timeframe</option>
+          </select>
+        </div>
+      </div>
+
+      {/* Content */}
+      {viewMode === 'grid' ? renderGridView() : renderListView()}
     </div>
   );
 };
