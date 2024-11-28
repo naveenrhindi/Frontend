@@ -11,6 +11,7 @@ import ChartOne from './components/Visualise/ChartOne'; // Import ChartOne compo
 import ChartTwo from './components/Visualise/ChartTwo'; // Import ChartTwo component
 import ChartThree from './components/Visualise/ChartThree'; // Import ChartThree component
 import ExportOptions from './components/Export/ExportOptions'; // Correct path for ExportOptions component
+import CarbonSinks from './components/CarbonSinks/CarbonSinks';
 
 const App = () => {
   const [ownerData, setOwnerData] = useState({
@@ -63,7 +64,7 @@ const App = () => {
               <Route path="/chartOne" element={<ChartOne />} />
               <Route path="/chartTwo" element={<ChartTwo />} />
               <Route path="/chartThree" element={<ChartThree />} />
-              <Route path="/carbonSinks" element={<div>Carbon Sinks Page</div>} />
+              <Route path="/carbonSinks" element={<CarbonSinks />} />
               <Route path="/reports" element={
                 <div>
                   <h1 className="text-2xl font-bold mb-4">Reports</h1>

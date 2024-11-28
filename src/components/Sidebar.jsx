@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FaDatabase, FaChartBar, FaLightbulb, FaCog, FaBars } from 'react-icons/fa';
+import { FaDatabase, FaChartBar, FaLightbulb, FaCog, FaBars, FaTree } from 'react-icons/fa';
 import { Link, useLocation } from 'react-router-dom';
 
 function Sidebar() {
@@ -17,6 +17,7 @@ function Sidebar() {
   const menuItems = [
     { title: "DATA INPUT", icon: FaDatabase, path: "/dataInput" },
     { title: "VISUALIZE", icon: FaChartBar, path: "/visualise" },
+    { title: "CARBON SINKS", icon: FaTree, path: "/carbonSinks" },
     { title: "SUGGESTIONS", icon: FaLightbulb, path: "/suggestions" },
     { title: "SETTINGS", icon: FaCog, path: "/accountSettings" }
   ];
