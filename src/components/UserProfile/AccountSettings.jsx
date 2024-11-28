@@ -20,80 +20,103 @@ const AccountSettings = ({ ownerData, onSave }) => {
     onSave(updatedData);
   };
 
+  const inputClasses = "w-full p-2 border border-gray-300 rounded bg-white text-gray-700 focus:outline-none focus:ring-1 focus:ring-[#FFA500] focus:border-[#FFA500] hover:border-[#FFA500]";
+
   return (
-    <div className="bg-white p-6 rounded-lg shadow-md mt-8 ml-8 flex flex-col items-center">
-      <div className="w-full max-w-2xl">
-        <h2 className="text-3xl font-bold text-gray-800 mb-4">Account Settings</h2>
+    <div className="bg-white p-8 rounded-lg shadow-md mt-8 ml-8">
+      <div className="max-w-3xl mx-auto">
+        <h2 className="text-3xl font-bold text-gray-800 mb-8 text-center">Account Settings</h2>
         
-        {/* Personal Information */}
-        <div className="personal-info mb-8">
-          <h3 className="text-2xl font-semibold text-gray-800 mb-4">Personal Information</h3>
-          <label className="text-gray-600" htmlFor="full-name">Full Name</label>
-          <input
-            type="text"
-            id="full-name"
-            className="w-full p-2 mb-4 bg-white border border-gray-300 text-gray-800 rounded-md focus:border-green-500 focus:ring-1 focus:ring-green-500"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-          />
-          <label className="text-gray-600" htmlFor="phone">Phone Number</label>
-          <input
-            type="text"
-            id="phone"
-            className="w-full p-2 mb-4 bg-white border border-gray-300 text-gray-800 rounded-md focus:border-green-500 focus:ring-1 focus:ring-green-500"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-          />
-          <label className="text-gray-600" htmlFor="email">Email Address</label>
-          <input
-            type="email"
-            id="email"
-            className="w-full p-2 mb-4 bg-white border border-gray-300 text-gray-800 rounded-md focus:border-green-500 focus:ring-1 focus:ring-green-500"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-        </div>
+        <div className="grid gap-8">
+          {/* Personal Information */}
+          <div className="bg-white p-6 rounded-lg shadow-md border border-gray-200">
+            <h3 className="text-xl font-semibold text-[#FFA500] mb-6">Personal Information</h3>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-gray-700 mb-2 font-medium" htmlFor="full-name">Full Name</label>
+                <input
+                  type="text"
+                  id="full-name"
+                  className={inputClasses}
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                />
+              </div>
+              <div>
+                <label className="block text-gray-700 mb-2 font-medium" htmlFor="phone">Phone Number</label>
+                <input
+                  type="text"
+                  id="phone"
+                  className={inputClasses}
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                />
+              </div>
+              <div>
+                <label className="block text-gray-700 mb-2 font-medium" htmlFor="email">Email Address</label>
+                <input
+                  type="email"
+                  id="email"
+                  className={inputClasses}
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+              </div>
+            </div>
+          </div>
 
-        {/* Mine Information */}
-        <div className="mine-info mb-8">
-          <h3 className="text-2xl font-semibold text-gray-800 mb-4">Mine Information</h3>
-          <label className="text-gray-600" htmlFor="mine-name">Mine Name</label>
-          <input
-            type="text"
-            id="mine-name"
-            className="w-full p-2 mb-4 bg-white border border-gray-300 text-gray-800 rounded-md focus:border-green-500 focus:ring-1 focus:ring-green-500"
-            value={mineName}
-            onChange={(e) => setMineName(e.target.value)}
-          />
-          <label className="text-gray-600" htmlFor="mine-address">Mine Address</label>
-          <input
-            type="text"
-            id="mine-address"
-            className="w-full p-2 mb-4 bg-white border border-gray-300 text-gray-800 rounded-md focus:border-green-500 focus:ring-1 focus:ring-green-500"
-            value={mineAddress}
-            onChange={(e) => setMineAddress(e.target.value)}
-          />
-        </div>
+          {/* Mine Information */}
+          <div className="bg-white p-6 rounded-lg shadow-md border border-gray-200">
+            <h3 className="text-xl font-semibold text-[#FFA500] mb-6">Mine Information</h3>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-gray-700 mb-2 font-medium" htmlFor="mine-name">Mine Name</label>
+                <input
+                  type="text"
+                  id="mine-name"
+                  className={inputClasses}
+                  value={mineName}
+                  onChange={(e) => setMineName(e.target.value)}
+                />
+              </div>
+              <div>
+                <label className="block text-gray-700 mb-2 font-medium" htmlFor="mine-address">Mine Address</label>
+                <input
+                  type="text"
+                  id="mine-address"
+                  className={inputClasses}
+                  value={mineAddress}
+                  onChange={(e) => setMineAddress(e.target.value)}
+                />
+              </div>
+            </div>
+          </div>
 
-        {/* About Section */}
-        <div className="about-section mb-8">
-          <h3 className="text-2xl font-semibold text-gray-800 mb-4">About</h3>
-          <label className="text-gray-600" htmlFor="about">Description</label>
-          <textarea
-            id="about"
-            className="w-full p-2 mb-4 bg-white border border-gray-300 text-gray-800 rounded-md focus:border-green-500 focus:ring-1 focus:ring-green-500 h-32"
-            value={about}
-            onChange={(e) => setAbout(e.target.value)}
-          />
+          {/* About Section */}
+          <div className="bg-white p-6 rounded-lg shadow-md border border-gray-200">
+            <h3 className="text-xl font-semibold text-[#FFA500] mb-6">About</h3>
+            <div>
+              <label className="block text-gray-700 mb-2 font-medium" htmlFor="about">Description</label>
+              <textarea
+                id="about"
+                className={inputClasses + " h-32 resize-none"}
+                value={about}
+                onChange={(e) => setAbout(e.target.value)}
+              />
+            </div>
+          </div>
         </div>
 
         {/* Save Button */}
-        <button
-          onClick={handleSave}
-          className="w-full bg-green-500 text-white py-2 px-4 rounded-md hover:bg-green-600 transition-colors duration-200"
-        >
-          Save Changes
-        </button>
+        <div className="mt-8">
+          <button
+            type="submit"
+            className="w-full text-green-600 border border-green-600 px-4 py-2 rounded-md hover:bg-green-600 hover:text-white transition-all duration-300"
+            onClick={handleSave}
+          >
+            Save Changes
+          </button>
+        </div>
       </div>
     </div>
   );

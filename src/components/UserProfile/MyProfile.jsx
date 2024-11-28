@@ -29,6 +29,11 @@ const MyProfile = ({ ownerData }) => {
 
   const profileUrl = `https://www.coalmineprofile.com/${ownerData.name.replace(/\s+/g, '').toLowerCase()}`;
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // Add functionality for the submit button here
+  };
+
   return (
     <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md mt-8 flex flex-col items-center">
       {/* Coal Mine Image */}
@@ -88,6 +93,16 @@ const MyProfile = ({ ownerData }) => {
           {ownerData.about}
         </p>
       </div>
+
+      {/* Add a form with a submit button here */}
+      <form onSubmit={handleSubmit}>
+        <button
+          type="submit"
+          className="w-full text-green-600 border border-green-600 px-4 py-2 rounded-md hover:bg-green-600 hover:text-white transition-all duration-300"
+        >
+          Save Changes
+        </button>
+      </form>
     </div>
   );
 };

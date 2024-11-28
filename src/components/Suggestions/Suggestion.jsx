@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import GeneralSuggestions from './GeneralSuggestions';
 import PersonalizedSuggestions from './PersonalizedSuggestions';
-import OfficerSuggestions from './OfficerSuggestions';
+import EnvironmentalSuggestions from './EnvironmentalSuggestions';
 import SuggestionProgress from './SuggestionProgress';
+import useSuggestionStore from '../../store/suggestionStore';
 
 const Suggestions = ({ data }) => {
   const [selectedTab, setSelectedTab] = useState('general');
@@ -10,11 +11,25 @@ const Suggestions = ({ data }) => {
     category: 'all',
     priority: 'all',
     timeframe: 'all',
-    status: 'all' // New filter for implementation status
+    status: 'all'
   });
   const [isFilterExpanded, setIsFilterExpanded] = useState(false);
   const [activeFilter, setActiveFilter] = useState(null);
   const [selectedSuggestion, setSelectedSuggestion] = useState(null);
+  const [statusCounts, setStatusCounts] = useState({});
+  
+  // Get store methods
+  const getStatusCounts = useSuggestionStore(state => state.getStatusCounts);
+  const suggestions = useSuggestionStore(state => state.suggestions);
+
+  // Update status counts whenever suggestions change
+  useEffect(() => {
+    const updateStatusCounts = () => {
+      const counts = getStatusCounts();
+      setStatusCounts(counts);
+    };
+    updateStatusCounts();
+  }, [suggestions, getStatusCounts]);
 
   const filterOptions = {
     category: ['all', 'Carbon Emissions', 'Water Usage', 'Energy Efficiency', 'Waste Management'],
@@ -98,21 +113,22 @@ const Suggestions = ({ data }) => {
   const tabs = [
     { id: 'general', label: 'General Suggestions', icon: '🌍' },
     { id: 'personalized', label: 'Personalized Suggestions', icon: '📊' },
-    { id: 'officer', label: 'Officer Suggestions', icon: '👨‍💼' }
+    { id: 'officer', label: 'Environmental Suggestions', icon: '🌿' }
   ];
 
   const getFilterIcon = (type, value) => {
     return filterIcons[type]?.[value] || filterIcons[type]?.['all'];
   };
 
-  // Calculate overall progress
+  // Calculate overall progress using status counts
   const calculateOverallProgress = () => {
-    if (!data || data.length === 0) return 0;
+    const total = Object.values(statusCounts).reduce((sum, count) => sum + count, 0);
+    if (total === 0) return 0;
     
-    const completedSuggestions = data.filter(s => s.status === 'completed').length;
-    const inProgressSuggestions = data.filter(s => s.status === 'in-progress').length;
+    const completed = statusCounts.completed || 0;
+    const inProgress = statusCounts['in-progress'] || 0;
     
-    return Math.round((completedSuggestions + (inProgressSuggestions * 0.5)) / data.length * 100);
+    return Math.round((completed + (inProgress * 0.5)) / total * 100);
   };
 
   return (
@@ -124,10 +140,10 @@ const Suggestions = ({ data }) => {
         <div className="bg-white p-4 rounded-lg border border-black shadow-lg transition-transform duration-500 ease-in-out transform hover:scale-105 hover:shadow-2xl">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-600">Implementation Progress</p>
+              <p className="text-sm text-gray-600">Overall Progress</p>
               <p className="text-2xl font-bold text-black">{calculateOverallProgress()}%</p>
             </div>
-            <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+            <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
               <span className="text-xl">📊</span>
             </div>
           </div>
@@ -136,26 +152,22 @@ const Suggestions = ({ data }) => {
         <div className="bg-white p-4 rounded-lg border border-black shadow-lg transition-transform duration-500 ease-in-out transform hover:scale-105 hover:shadow-2xl">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-600">Completed Suggestions</p>
-              <p className="text-2xl font-bold text-black">
-                {data?.filter(s => s.status === 'completed').length || 0}
-              </p>
+              <p className="text-sm text-gray-600">Pending Tasks</p>
+              <p className="text-2xl font-bold text-black">{statusCounts.pending || 0}</p>
             </div>
-            <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
-              <span className="text-xl">✅</span>
+            <div className="w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center">
+              <span className="text-xl">⏳</span>
             </div>
           </div>
         </div>
-        
+
         <div className="bg-white p-4 rounded-lg border border-black shadow-lg transition-transform duration-500 ease-in-out transform hover:scale-105 hover:shadow-2xl">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600">In Progress</p>
-              <p className="text-2xl font-bold text-black">
-                {data?.filter(s => s.status === 'in-progress').length || 0}
-              </p>
+              <p className="text-2xl font-bold text-black">{statusCounts['in-progress'] || 0}</p>
             </div>
-            <div className="w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center">
+            <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
               <span className="text-xl">🔄</span>
             </div>
           </div>
@@ -164,13 +176,11 @@ const Suggestions = ({ data }) => {
         <div className="bg-white p-4 rounded-lg border border-black shadow-lg transition-transform duration-500 ease-in-out transform hover:scale-105 hover:shadow-2xl">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-600">Pending</p>
-              <p className="text-2xl font-bold text-black">
-                {data?.filter(s => s.status === 'pending').length || 0}
-              </p>
+              <p className="text-sm text-gray-600">Completed</p>
+              <p className="text-2xl font-bold text-black">{statusCounts.completed || 0}</p>
             </div>
-            <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center">
-              <span className="text-xl">⏳</span>
+            <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+              <span className="text-xl">✅</span>
             </div>
           </div>
         </div>
@@ -275,7 +285,7 @@ const Suggestions = ({ data }) => {
       <div className="bg-white p-6 rounded-lg border border-black shadow-lg">
         {selectedTab === 'general' && <GeneralSuggestions filters={filters} />}
         {selectedTab === 'personalized' && <PersonalizedSuggestions data={data} filters={filters} />}
-        {selectedTab === 'officer' && <OfficerSuggestions filters={filters} />}
+        {selectedTab === 'officer' && <EnvironmentalSuggestions filters={filters} />}
       </div>
 
       {/* Progress Tracking Modal */}

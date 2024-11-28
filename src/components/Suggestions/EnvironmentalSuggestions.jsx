@@ -2,7 +2,7 @@ import React, { useState, useCallback, useMemo } from 'react';
 import ProgressModal from './ProgressModal/ProgressModal';
 import useSuggestionStore from '../../store/suggestionStore';
 
-const OfficerSuggestions = ({ filters }) => {
+const EnvironmentalSuggestions = ({ filters }) => {
   const [selectedSuggestion, setSelectedSuggestion] = useState(null);
   const [viewMode, setViewMode] = useState('grid'); // 'grid' or 'list'
   const [sortBy, setSortBy] = useState('priority'); // 'priority', 'status', 'progress'
@@ -19,52 +19,52 @@ const OfficerSuggestions = ({ filters }) => {
   const suggestions = [
     {
       id: 1,
-      title: "Site Inspection",
-      description: "Regularly inspect mining sites for environmental compliance.",
-      icon: "https://img.icons8.com/fluency/48/survey.png",
+      title: "Carbon Footprint Monitoring",
+      description: "Implement continuous monitoring of carbon emissions and greenhouse gases.",
+      icon: "/icons/smart-meter.svg",
       frequency: "Weekly",
       status: "pending",
-      category: "Environmental",
+      category: "Emissions",
       priority: "High"
     },
     {
       id: 2,
-      title: "Training Sessions",
-      description: "Conduct training sessions on environmental policies and practices.",
-      icon: "https://img.icons8.com/color/48/commercial-development-management.png",
+      title: "Water Quality Assessment",
+      description: "Regular testing and monitoring of water quality in mining areas.",
+      icon: "/icons/process-optimization.svg",
       frequency: "Monthly",
       status: "pending",
-      category: "Training",
-      priority: "Medium"
+      category: "Water",
+      priority: "High"
     },
     {
       id: 3,
-      title: "Environmental Management",
-      description: "Develop and implement an environmental management system (EMS).",
-      icon: "https://img.icons8.com/color/48/environment-care.png",
+      title: "Waste Management System",
+      description: "Comprehensive waste reduction and recycling program implementation.",
+      icon: "/icons/waste-heat-recovery.svg",
       frequency: "Quarterly",
       status: "in-progress",
-      category: "Management",
+      category: "Waste",
       priority: "High"
     },
     {
       id: 4,
-      title: "Incident Reporting",
-      description: "Establish a reporting system for environmental incidents and improvements.",
-      icon: "https://img.icons8.com/color/48/report-card.png",
+      title: "Biodiversity Protection",
+      description: "Monitor and protect local flora and fauna in mining regions.",
+      icon: "/icons/local-sourcing.svg",
       frequency: "Daily",
       status: "completed",
-      category: "Reporting",
+      category: "Biodiversity",
       priority: "High"
     },
     {
       id: 5,
-      title: "Agency Collaboration",
-      description: "Collaborate with environmental agencies for audits and assessments.",
-      icon: "https://img.icons8.com/color/48/collaboration.png",
+      title: "Environmental Compliance",
+      description: "Ensure adherence to environmental regulations and standards.",
+      icon: "/icons/training.svg",
       frequency: "Quarterly",
       status: "pending",
-      category: "Collaboration",
+      category: "Compliance",
       priority: "Medium"
     }
   ];
@@ -163,7 +163,15 @@ const OfficerSuggestions = ({ filters }) => {
               {/* Header */}
               <div className="flex items-start space-x-4">
                 <div className="w-12 h-12 rounded-lg bg-gray-50 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
-                  <img src={suggestion.icon} alt="" className="w-8 h-8" />
+                  <img 
+                    src={suggestion.icon} 
+                    alt="" 
+                    className="w-8 h-8"
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = '/icons/default-suggestion.svg';
+                    }} 
+                  />
                 </div>
                 <div className="flex-1 min-w-0">
                   <h3 className="text-lg font-semibold text-gray-900 truncate group-hover:text-black">
@@ -201,18 +209,11 @@ const OfficerSuggestions = ({ filters }) => {
                       width: `${progress}%`,
                       backgroundColor: status === 'completed' ? '#10B981' : 
                                     status === 'in-progress' ? '#3B82F6' : 
-                                    '#FCD34D'
+                                    '#F59E0B'
                     }}
                   />
                 </div>
               </div>
-
-              {/* Last Updated */}
-              {savedData?.lastUpdated && (
-                <div className="mt-4 text-xs text-gray-500">
-                  Last updated: {new Date(savedData.lastUpdated).toLocaleDateString()}
-                </div>
-              )}
             </div>
           </div>
         );
@@ -236,13 +237,21 @@ const OfficerSuggestions = ({ filters }) => {
             <div className="p-4 flex items-center space-x-4">
               {/* Icon and Title */}
               <div className="w-10 h-10 rounded-lg bg-gray-50 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
-                <img src={suggestion.icon} alt="" className="w-6 h-6" />
+                <img 
+                  src={suggestion.icon} 
+                  alt="" 
+                  className="w-6 h-6"
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = '/icons/default-suggestion.svg';
+                  }} 
+                />
               </div>
               
               {/* Main Content */}
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-base font-semibold text-gray-900 group-hover:text-black">
+                  <h3 className="text-base font-semibold text-gray-900 truncate">
                     {suggestion.title}
                   </h3>
                   <div className="flex items-center space-x-2">
@@ -265,12 +274,21 @@ const OfficerSuggestions = ({ filters }) => {
                           width: `${progress}%`,
                           backgroundColor: status === 'completed' ? '#10B981' : 
                                         status === 'in-progress' ? '#3B82F6' : 
-                                        '#FCD34D'
+                                        '#F59E0B'
                         }}
                       />
                     </div>
                   </div>
                   <span className="text-sm font-medium text-gray-700">{progress}%</span>
+                </div>
+                
+                {/* Category and Frequency */}
+                <div className="mt-2 flex items-center space-x-2">
+                  <span className="text-sm text-gray-500">{suggestion.category}</span>
+                  <span className="text-gray-300">•</span>
+                  <span className={`text-sm ${getFrequencyColor(suggestion.frequency)}`}>
+                    {suggestion.frequency}
+                  </span>
                 </div>
               </div>
             </div>
@@ -281,38 +299,33 @@ const OfficerSuggestions = ({ filters }) => {
   );
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow-sm">
-      {/* Controls */}
-      <div className="mb-6 flex justify-between items-center">
-        <div className="flex items-center space-x-4">
+    <div className="space-y-6">
+      {/* View Toggle and Sort Controls */}
+      <div className="flex flex-wrap gap-4 justify-between items-center">
+        <div className="flex items-center space-x-2">
           <button
             onClick={() => setViewMode('grid')}
-            className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
-              viewMode === 'grid' 
-                ? 'bg-gray-900 text-white' 
-                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-            }`}
+            className={`p-2 rounded-lg ${viewMode === 'grid' ? 'bg-black text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
           >
             Grid View
           </button>
           <button
             onClick={() => setViewMode('list')}
-            className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
-              viewMode === 'list' 
-                ? 'bg-gray-900 text-white' 
-                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-            }`}
+            className={`p-2 rounded-lg ${viewMode === 'list' ? 'bg-black text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
           >
             List View
           </button>
         </div>
-
+        
         <div className="flex items-center space-x-2">
-          <span className="text-sm text-gray-500">Sort by:</span>
+          <label htmlFor="sort" className="text-sm font-medium text-gray-700">
+            Sort by:
+          </label>
           <select
+            id="sort"
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value)}
-            className="text-sm border-gray-200 rounded-lg focus:ring-black focus:border-black"
+            className="block w-full rounded-md border-gray-300 text-base focus:border-black focus:ring-black sm:text-sm"
           >
             <option value="priority">Priority</option>
             <option value="status">Status</option>
@@ -321,9 +334,10 @@ const OfficerSuggestions = ({ filters }) => {
         </div>
       </div>
 
-      {/* Content */}
+      {/* Suggestions Grid/List */}
       {viewMode === 'grid' ? renderGridView() : renderListView()}
 
+      {/* Progress Modal */}
       {selectedSuggestion && (
         <ProgressModal
           suggestion={selectedSuggestion}
@@ -334,4 +348,4 @@ const OfficerSuggestions = ({ filters }) => {
   );
 };
 
-export default OfficerSuggestions;
+export default EnvironmentalSuggestions;
