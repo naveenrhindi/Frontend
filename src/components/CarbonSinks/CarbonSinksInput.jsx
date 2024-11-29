@@ -1,157 +1,171 @@
 import React from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { FaTree, FaSeedling, FaLeaf, FaMountain } from 'react-icons/fa';
 
-const CarbonSinksInput = ({ activeTab, data, onUpdate }) => {
+const CarbonSinksInput = ({ type, data, onUpdate }) => {
   const handleInputChange = (field, value) => {
-    onUpdate({
-      ...data,
-      [activeTab]: {
-        ...data[activeTab],
-        [field]: value
-      }
-    });
+    if (typeof value === 'number') {
+      value = value === 0 ? 0 : parseFloat(value.toString().replace(/^0+/, ''));
+    }
+    onUpdate({ ...data, [field]: value });
   };
 
+  const inputClasses = "w-full p-2 border border-gray-300 rounded bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent";
+  const cardClasses = "bg-white dark:bg-gray-800 p-4 rounded-lg shadow-lg";
+
+  const renderAfforestationInputs = () => (
+    <div className={cardClasses}>
+      <div className="space-y-6">
+        <div>
+          <label className="block text-gray-700 dark:text-gray-300 mb-2">
+            Area (hectares)
+          </label>
+          <input
+            type="number"
+            min="0"
+            step="any"
+            value={data.area || ''}
+            onChange={(e) => handleInputChange('area', e.target.value === '' ? 0 : parseFloat(e.target.value))}
+            className={inputClasses}
+            placeholder="Enter area in hectares"
+          />
+        </div>
+
+        <div>
+          <label className="block text-gray-700 dark:text-gray-300 mb-2">
+            Planting Rate (trees/hectare)
+          </label>
+          <input
+            type="number"
+            min="0"
+            step="any"
+            value={data.plantingRate || ''}
+            onChange={(e) => handleInputChange('plantingRate', e.target.value === '' ? 0 : parseFloat(e.target.value))}
+            className={inputClasses}
+            placeholder="Enter planting rate"
+          />
+        </div>
+
+        <div>
+          <label className="block text-gray-700 dark:text-gray-300 mb-2">
+            Tree Type
+          </label>
+          <select
+            value={data.treeType}
+            onChange={(e) => handleInputChange('treeType', e.target.value)}
+            className={inputClasses}
+          >
+            <option value="broadleaf">Broadleaf</option>
+            <option value="evergreen">Evergreen</option>
+            <option value="mixed">Mixed</option>
+          </select>
+        </div>
+
+        <div className="p-4 bg-green-50 rounded-lg">
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-medium text-gray-600">Estimated Carbon Sequestration</span>
+            <span className="text-lg font-semibold text-green-600">{data.estimatedCarbonSeq.toFixed(2)} tCO2/year</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderSoilCarbonInputs = () => (
+    <div className={cardClasses}>
+      <div className="space-y-6">
+        <div>
+          <label className="block text-gray-700 dark:text-gray-300 mb-2">
+            Area (hectares)
+          </label>
+          <input
+            type="number"
+            min="0"
+            step="any"
+            value={data.area || ''}
+            onChange={(e) => handleInputChange('area', e.target.value === '' ? 0 : parseFloat(e.target.value))}
+            className={inputClasses}
+            placeholder="Enter area in hectares"
+          />
+        </div>
+
+        <div>
+          <label className="block text-gray-700 dark:text-gray-300 mb-2">
+            Management Practice
+          </label>
+          <select
+            value={data.managementType}
+            onChange={(e) => handleInputChange('managementType', e.target.value)}
+            className={inputClasses}
+          >
+            <option value="organic">Organic Addition</option>
+            <option value="conservation">Conservation Tillage</option>
+          </select>
+        </div>
+
+        <div className="p-4 bg-orange-50 rounded-lg">
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-medium text-gray-600">Estimated Carbon Sequestration</span>
+            <span className="text-lg font-semibold text-orange-600">{data.estimatedCarbonSeq.toFixed(2)} tCO2/year</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderGrasslandInputs = () => (
+    <div className={cardClasses}>
+      <div className="space-y-6">
+        <div>
+          <label className="block text-gray-700 dark:text-gray-300 mb-2">
+            Area (hectares)
+          </label>
+          <input
+            type="number"
+            min="0"
+            step="any"
+            value={data.area || ''}
+            onChange={(e) => handleInputChange('area', e.target.value === '' ? 0 : parseFloat(e.target.value))}
+            className={inputClasses}
+            placeholder="Enter area in hectares"
+          />
+        </div>
+
+        <div>
+          <label className="block text-gray-700 dark:text-gray-300 mb-2">
+            Grass Type
+          </label>
+          <select
+            value={data.grassType}
+            onChange={(e) => handleInputChange('grassType', e.target.value)}
+            className={inputClasses}
+          >
+            <option value="native">Native</option>
+            <option value="perennial">Perennial</option>
+            <option value="mixed">Mixed</option>
+          </select>
+        </div>
+
+        <div className="p-4 bg-yellow-50 rounded-lg">
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-medium text-gray-600">Estimated Carbon Sequestration</span>
+            <span className="text-lg font-semibold text-yellow-600">{data.estimatedCarbonSeq.toFixed(2)} tCO2/year</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
   return (
-    <AnimatePresence mode="wait">
-      <motion.div
-        key={activeTab}
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -20 }}
-        transition={{ duration: 0.2 }}
-        className="space-y-4"
-      >
-        {activeTab === 'afforestation' && (
-          <div className="space-y-4">
-            <div className="flex items-center space-x-4 mb-4">
-              <FaTree className="text-2xl text-primary" />
-              <h3 className="text-lg font-semibold text-black dark:text-white">
-                Afforestation Management
-              </h3>
-            </div>
-            <div className="space-y-4">
-              <div className="form-group">
-                <label className="mb-2.5 block font-medium text-black dark:text-white">
-                  Area (hectares)
-                </label>
-                <input
-                  type="number"
-                  value={data.afforestation.area}
-                  onChange={(e) => handleInputChange('area', parseFloat(e.target.value) || 0)}
-                  className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
-                  placeholder="Enter area in hectares"
-                />
-              </div>
-              <div className="form-group">
-                <label className="mb-2.5 block font-medium text-black dark:text-white">
-                  Planting Rate (trees/hectare)
-                </label>
-                <input
-                  type="number"
-                  value={data.afforestation.plantingRate}
-                  onChange={(e) => handleInputChange('plantingRate', parseFloat(e.target.value) || 0)}
-                  className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
-                  placeholder="Enter planting rate"
-                />
-              </div>
-              <div className="form-group">
-                <label className="mb-2.5 block font-medium text-black dark:text-white">
-                  Tree Type
-                </label>
-                <select
-                  value={data.afforestation.treeType}
-                  onChange={(e) => handleInputChange('treeType', e.target.value)}
-                  className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
-                >
-                  <option value="broadleaf">Broadleaf</option>
-                  <option value="evergreen">Evergreen</option>
-                  <option value="mixed">Mixed</option>
-                </select>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {activeTab === 'soilCarbon' && (
-          <div className="space-y-4">
-            <div className="flex items-center space-x-4 mb-4">
-              <FaLeaf className="text-2xl text-primary" />
-              <h3 className="text-lg font-semibold text-black dark:text-white">
-                Soil Carbon Management
-              </h3>
-            </div>
-            <div className="space-y-4">
-              <div className="form-group">
-                <label className="mb-2.5 block font-medium text-black dark:text-white">
-                  Area (hectares)
-                </label>
-                <input
-                  type="number"
-                  value={data.soilCarbon.area}
-                  onChange={(e) => handleInputChange('area', parseFloat(e.target.value) || 0)}
-                  className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
-                  placeholder="Enter area in hectares"
-                />
-              </div>
-              <div className="form-group">
-                <label className="mb-2.5 block font-medium text-black dark:text-white">
-                  Management Type
-                </label>
-                <select
-                  value={data.soilCarbon.managementType}
-                  onChange={(e) => handleInputChange('managementType', e.target.value)}
-                  className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
-                >
-                  <option value="organic">Organic Addition</option>
-                  <option value="conservation">Conservation Tillage</option>
-                </select>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {activeTab === 'grassland' && (
-          <div className="space-y-4">
-            <div className="flex items-center space-x-4 mb-4">
-              <FaMountain className="text-2xl text-primary" />
-              <h3 className="text-lg font-semibold text-black dark:text-white">
-                Grassland Restoration
-              </h3>
-            </div>
-            <div className="space-y-4">
-              <div className="form-group">
-                <label className="mb-2.5 block font-medium text-black dark:text-white">
-                  Area (hectares)
-                </label>
-                <input
-                  type="number"
-                  value={data.grassland.area}
-                  onChange={(e) => handleInputChange('area', parseFloat(e.target.value) || 0)}
-                  className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
-                  placeholder="Enter area in hectares"
-                />
-              </div>
-              <div className="form-group">
-                <label className="mb-2.5 block font-medium text-black dark:text-white">
-                  Grass Type
-                </label>
-                <select
-                  value={data.grassland.grassType}
-                  onChange={(e) => handleInputChange('grassType', e.target.value)}
-                  className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
-                >
-                  <option value="native">Native Species</option>
-                  <option value="perennial">Perennial Grasses</option>
-                  <option value="mixed">Mixed Species</option>
-                </select>
-              </div>
-            </div>
-          </div>
-        )}
-      </motion.div>
-    </AnimatePresence>
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+    >
+      {type === 'afforestation' && renderAfforestationInputs()}
+      {type === 'soilCarbon' && renderSoilCarbonInputs()}
+      {type === 'grassland' && renderGrasslandInputs()}
+    </motion.div>
   );
 };
 

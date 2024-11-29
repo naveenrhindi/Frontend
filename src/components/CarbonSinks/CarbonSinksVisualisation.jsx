@@ -1,26 +1,60 @@
 import React from 'react';
 import ReactApexChart from 'react-apexcharts';
 import { motion } from 'framer-motion';
+import { FaTree, FaSeedling, FaLeaf } from 'react-icons/fa';
+import { BsArrowUpShort, BsArrowDownShort } from 'react-icons/bs';
+
+const StatsCard = ({
+  icon: Icon,
+  value,
+  label,
+  change,
+  isPositive,
+  isNegative
+}) => {
+  return (
+    <div className="relative flex flex-col p-6 bg-white rounded-[20px] border border-gray-100">
+      <div className="w-12 h-12 mb-4 flex items-center justify-center">
+        <Icon className={`text-2xl ${
+          isPositive ? 'text-green-500' : 
+          isNegative ? 'text-blue-500' : 
+          'text-orange-500'
+        }`} />
+      </div>
+      
+      <div className="flex flex-col gap-1">
+        <h3 className="text-2xl font-bold text-gray-900">
+          {value}
+        </h3>
+        <div className="flex items-center justify-between">
+          <span className="text-gray-500 text-sm">
+            {label}
+          </span>
+          <span className={`flex items-center text-sm font-medium ${
+            isPositive ? 'text-green-500' : 
+            isNegative ? 'text-blue-500' : 
+            'text-orange-500'
+          }`}>
+            {change}
+            {isPositive && <BsArrowUpShort className="text-xl" />}
+            {isNegative && <BsArrowDownShort className="text-xl" />}
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const CarbonSinksVisualisation = ({ data }) => {
-  // Calculate total areas and sequestration for each type
-  const calculateMetrics = () => {
-    const afforestationSeq = data.afforestation.area * data.afforestation.plantingRate * 0.05;
-    const soilSeq = data.soilCarbon.area * (data.soilCarbon.managementType === 'organic' ? 3 : 2);
-    const grasslandSeq = data.grassland.area * (data.grassland.grassType === 'native' ? 4 : 3);
-
-    return {
-      areas: [data.afforestation.area, data.soilCarbon.area, data.grassland.area],
-      sequestration: [afforestationSeq, soilSeq, grasslandSeq]
-    };
-  };
-
-  const metrics = calculateMetrics();
-
+  // Bar Chart - Areas by Type
   const areaChartConfig = {
     series: [{
-      name: 'Area (ha)',
-      data: metrics.areas
+      name: 'Area',
+      data: [
+        data.afforestation.area,
+        data.soilCarbon.area,
+        data.grassland.area
+      ]
     }],
     options: {
       chart: {
@@ -32,22 +66,28 @@ const CarbonSinksVisualisation = ({ data }) => {
       },
       plotOptions: {
         bar: {
-          horizontal: false,
-          columnWidth: '55%',
-          borderRadius: 5,
-          distributed: true
+          borderRadius: 10,
+          dataLabels: {
+            position: 'top'
+          },
+          columnWidth: '50%',
         }
       },
+      colors: ['#10B981'],
       dataLabels: {
-        enabled: false
-      },
-      stroke: {
-        show: true,
-        width: 2,
-        colors: ['transparent']
+        enabled: true,
+        formatter: function (val) {
+          return val.toFixed(1) + " ha";
+        },
+        offsetY: -20,
+        style: {
+          fontSize: '12px',
+          colors: ["#304758"]
+        }
       },
       xaxis: {
-        categories: ['Afforestation', 'Soil Carbon', 'Grassland'],
+        categories: ["Afforestation", "Soil Carbon", "Grassland"],
+        position: 'bottom',
         axisBorder: {
           show: false
         },
@@ -56,55 +96,54 @@ const CarbonSinksVisualisation = ({ data }) => {
         },
         labels: {
           style: {
-            colors: '#64748B'
+            colors: '#304758',
+            fontSize: '12px'
           }
         }
       },
       yaxis: {
-        title: {
-          text: 'Area (hectares)',
-          style: {
-            color: '#64748B'
-          }
+        axisBorder: {
+          show: false
+        },
+        axisTicks: {
+          show: false
         },
         labels: {
-          style: {
-            colors: '#64748B'
-          }
-        }
-      },
-      fill: {
-        opacity: 1,
-        colors: ['#22c55e', '#16a34a', '#15803d']
-      },
-      tooltip: {
-        y: {
+          show: true,
           formatter: function (val) {
-            return val + " ha";
+            return val.toFixed(1) + " ha";
+          },
+          style: {
+            colors: '#304758',
+            fontSize: '12px'
           }
         }
       },
       grid: {
-        show: true,
-        borderColor: '#E2E8F0',
-        strokeDashArray: 5,
-        position: 'back'
-      },
-      theme: {
-        mode: 'light'
+        borderColor: '#e5e7eb',
+        yaxis: {
+          lines: {
+            show: false
+          }
+        }
       }
     }
   };
 
+  // Donut Chart - Carbon Sequestration by Type
   const sequestrationChartConfig = {
-    series: metrics.sequestration,
+    series: [
+      data.afforestation.estimatedCarbonSeq,
+      data.soilCarbon.estimatedCarbonSeq,
+      data.grassland.estimatedCarbonSeq
+    ],
     options: {
       chart: {
         type: 'donut',
         height: 350
       },
       labels: ['Afforestation', 'Soil Carbon', 'Grassland'],
-      colors: ['#22c55e', '#16a34a', '#15803d'],
+      colors: ['#10B981', '#F59E0B', '#3B82F6'],
       plotOptions: {
         pie: {
           donut: {
@@ -115,7 +154,8 @@ const CarbonSinksVisualisation = ({ data }) => {
                 show: true,
                 label: 'Total Sequestration',
                 formatter: function (w) {
-                  return w.globals.seriesTotals.reduce((a, b) => a + b, 0).toFixed(2) + ' tCO2e';
+                  const total = w.globals.seriesTotals.reduce((a, b) => a + b, 0);
+                  return total.toFixed(2) + ' tCO2/year';
                 }
               }
             }
@@ -125,41 +165,145 @@ const CarbonSinksVisualisation = ({ data }) => {
       dataLabels: {
         enabled: true,
         formatter: function (val, opts) {
-          return opts.w.globals.series[opts.seriesIndex].toFixed(1) + ' tCO2e';
+          return opts.w.config.series[opts.seriesIndex].toFixed(2) + ' tCO2/year';
         }
       },
       legend: {
-        show: true,
         position: 'bottom',
+        horizontalAlign: 'center',
         labels: {
-          colors: '#64748B'
+          colors: '#304758'
         }
+      },
+      responsive: [{
+        breakpoint: 480,
+        options: {
+          chart: {
+            width: 300
+          },
+          legend: {
+            position: 'bottom'
+          }
+        }
+      }]
+    }
+  };
+
+  // Line Chart - Trend Analysis
+  const trendChartConfig = {
+    series: [{
+      name: 'Projected Sequestration',
+      data: [
+        data.afforestation.estimatedCarbonSeq,
+        data.afforestation.estimatedCarbonSeq * 1.2,
+        data.afforestation.estimatedCarbonSeq * 1.5,
+        data.afforestation.estimatedCarbonSeq * 1.8,
+        data.afforestation.estimatedCarbonSeq * 2.1
+      ]
+    }],
+    options: {
+      chart: {
+        type: 'line',
+        height: 350,
+        toolbar: {
+          show: false
+        }
+      },
+      stroke: {
+        curve: 'smooth',
+        width: 3
+      },
+      colors: ['#10B981'],
+      markers: {
+        size: 4,
+        colors: ['#10B981'],
+        strokeColors: '#fff',
+        strokeWidth: 2,
+        hover: {
+          size: 7,
+        }
+      },
+      xaxis: {
+        categories: ['Year 1', 'Year 2', 'Year 3', 'Year 4', 'Year 5'],
+        labels: {
+          style: {
+            colors: '#304758',
+            fontSize: '12px'
+          }
+        }
+      },
+      yaxis: {
+        title: {
+          text: 'Carbon Sequestration (tCO2/year)',
+          style: {
+            color: '#304758'
+          }
+        },
+        labels: {
+          formatter: function (val) {
+            return val.toFixed(1);
+          },
+          style: {
+            colors: '#304758',
+            fontSize: '12px'
+          }
+        }
+      },
+      grid: {
+        borderColor: '#e5e7eb'
       },
       tooltip: {
         y: {
           formatter: function (val) {
-            return val.toFixed(2) + ' tCO2e';
+            return val.toFixed(2) + ' tCO2/year';
           }
         }
-      },
-      theme: {
-        mode: 'light'
       }
     }
   };
 
   return (
     <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.5 }}
-      className="p-6 space-y-6"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="p-6"
     >
-      <div>
-        <h4 className="text-xl font-semibold text-black dark:text-white mb-4">
-          Area Distribution
-        </h4>
-        <div className="h-[350px]">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <StatsCard
+          icon={FaTree}
+          value={`${data.afforestation.area} ha/day`}
+          label="Total Afforestation"
+          change="+2.5%"
+          isPositive={true}
+        />
+        <StatsCard
+          icon={FaSeedling}
+          value={`${data.soilCarbon.area} ha/day`}
+          label="Soil Carbon Area"
+          change="+1.8%"
+          isPositive={true}
+        />
+        <StatsCard
+          icon={FaLeaf}
+          value={`${data.grassland.area} ha/day`}
+          label="Grassland Area"
+          change="+3.2%"
+          isPositive={true}
+        />
+        <StatsCard
+          icon={FaTree}
+          value={`${(data.afforestation.estimatedCarbonSeq + data.soilCarbon.estimatedCarbonSeq + data.grassland.estimatedCarbonSeq).toFixed(2)} tCO2/day`}
+          label="Total Sequestration"
+          change="+2.59%"
+          isPositive={true}
+        />
+      </div>
+
+      {/* Top row with area chart (3/4) and sequestration chart (1/4) */}
+      <div className="mt-8 grid grid-cols-12 gap-6">
+        {/* Area Distribution (3/4 width) */}
+        <div className="col-span-9 bg-white p-6 rounded-[20px] border border-gray-100">
+          <h3 className="text-lg font-semibold text-gray-800 mb-4">Area Distribution by Type</h3>
           <ReactApexChart
             options={areaChartConfig.options}
             series={areaChartConfig.series}
@@ -167,13 +311,10 @@ const CarbonSinksVisualisation = ({ data }) => {
             height={350}
           />
         </div>
-      </div>
 
-      <div>
-        <h4 className="text-xl font-semibold text-black dark:text-white mb-4">
-          Carbon Sequestration
-        </h4>
-        <div className="h-[350px]">
+        {/* Carbon Sequestration Distribution (1/4 width) */}
+        <div className="col-span-3 bg-white p-6 rounded-[20px] border border-gray-100">
+          <h3 className="text-lg font-semibold text-gray-800 mb-4">Carbon Sequestration</h3>
           <ReactApexChart
             options={sequestrationChartConfig.options}
             series={sequestrationChartConfig.series}
@@ -183,46 +324,15 @@ const CarbonSinksVisualisation = ({ data }) => {
         </div>
       </div>
 
-      {/* Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <motion.div
-          whileHover={{ scale: 1.02 }}
-          className="rounded-sm border border-stroke bg-white p-4 shadow-default dark:border-strokedark dark:bg-boxdark"
-        >
-          <h5 className="text-lg font-semibold text-black dark:text-white mb-2">Afforestation Impact</h5>
-          <p className="text-sm text-gray-600 dark:text-gray-400">
-            Total Trees: {(data.afforestation.area * data.afforestation.plantingRate).toLocaleString()}
-          </p>
-          <p className="text-sm text-gray-600 dark:text-gray-400">
-            Type: {data.afforestation.treeType}
-          </p>
-        </motion.div>
-
-        <motion.div
-          whileHover={{ scale: 1.02 }}
-          className="rounded-sm border border-stroke bg-white p-4 shadow-default dark:border-strokedark dark:bg-boxdark"
-        >
-          <h5 className="text-lg font-semibold text-black dark:text-white mb-2">Soil Management</h5>
-          <p className="text-sm text-gray-600 dark:text-gray-400">
-            Area: {data.soilCarbon.area.toLocaleString()} ha
-          </p>
-          <p className="text-sm text-gray-600 dark:text-gray-400">
-            Practice: {data.soilCarbon.managementType}
-          </p>
-        </motion.div>
-
-        <motion.div
-          whileHover={{ scale: 1.02 }}
-          className="rounded-sm border border-stroke bg-white p-4 shadow-default dark:border-strokedark dark:bg-boxdark"
-        >
-          <h5 className="text-lg font-semibold text-black dark:text-white mb-2">Grassland Status</h5>
-          <p className="text-sm text-gray-600 dark:text-gray-400">
-            Area: {data.grassland.area.toLocaleString()} ha
-          </p>
-          <p className="text-sm text-gray-600 dark:text-gray-400">
-            Type: {data.grassland.grassType}
-          </p>
-        </motion.div>
+      {/* Bottom row with trend chart (full width) */}
+      <div className="w-full bg-white p-6 rounded-[20px] border border-gray-100">
+        <h3 className="text-lg font-semibold text-gray-800 mb-4">5-Year Sequestration Projection</h3>
+        <ReactApexChart
+          options={trendChartConfig.options}
+          series={trendChartConfig.series}
+          type="line"
+          height={350}
+        />
       </div>
     </motion.div>
   );
