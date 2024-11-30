@@ -12,6 +12,9 @@ import ChartTwo from './components/Visualise/ChartTwo'; // Import ChartTwo compo
 import ChartThree from './components/Visualise/ChartThree'; // Import ChartThree component
 import ExportOptions from './components/Export/ExportOptions'; // Correct path for ExportOptions component
 import CarbonSinks from './components/CarbonSinks/CarbonSinks';
+import LandingPage from './components/Landing/LandingPage';
+import Login from './components/Landing/Login';
+import Register from './components/Landing/Register';
 
 const App = () => {
   const [ownerData, setOwnerData] = useState({
@@ -36,49 +39,68 @@ const App = () => {
     { parameter: "Safety Improvement", value: "Conduct bi-weekly safety drills" },
   ];
 
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
   return (
     <Router>
-      <div className="flex h-screen overflow-hidden">
-        <Sidebar />
-        <div className="flex flex-col flex-grow bg-white">
-          <Header 
-            ownerData={ownerData}
-            onProfileClick={() => { window.location.href = '/myProfile' }} 
-            onAccountSettingsClick={() => { window.location.href = '/accountSettings' }} 
-            onSectionChange={(section) => { 
-              if (section === 'dashboard') window.location.href = '/visualise';
-              else if (section === 'emissionData') window.location.href = '/dataInput';
-              else if (section === 'carbonSinks') window.location.href = '/carbonSinks';
-              else if (section === 'pathways') window.location.href = '/suggestions';
-              else if (section === 'reports') window.location.href = '/reports';
-            }}
-          />
-          <main className="p-8 bg-white dark:bg-white flex-grow overflow-auto">
-            <Routes>
-              <Route path="/" element={<Navigate to="/dataInput" />} />
-              <Route path="/dataInput" element={<DataInput />} />
-              <Route path="/carbonSinks" element={<CarbonSinks />} />
-              <Route path="/visualise" element={<Visualization />} />
-              <Route path="/suggestions" element={<Suggestions />} />
-              <Route path="/myProfile" element={<MyProfile ownerData={ownerData} />} />
-              <Route path="/accountSettings" element={<AccountSettings ownerData={ownerData} onSave={setOwnerData} />} />
-              <Route path="/chartOne" element={<ChartOne />} />
-              <Route path="/chartTwo" element={<ChartTwo />} />
-              <Route path="/chartThree" element={<ChartThree />} />
-              <Route path="/reports" element={
-                <div>
-                  <h1 className="text-2xl font-bold mb-4">Reports</h1>
-                  <ExportOptions
-                    inputData={inputData}
-                    suggestions={suggestions}
+      <Routes>
+        {/* Public routes */}
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/login" element={<Login setIsAuthenticated={setIsAuthenticated} />} />
+        <Route path="/register" element={<Register setIsAuthenticated={setIsAuthenticated} />} />
+
+        {/* Protected dashboard routes */}
+        <Route
+          path="/dashboard/*"
+          element={
+            isAuthenticated ? (
+              <div className="flex h-screen overflow-hidden">
+                <Sidebar />
+                <div className="flex flex-col flex-grow bg-white">
+                  <Header 
+                    ownerData={ownerData}
+                    onProfileClick={() => { window.location.href = '/dashboard/myProfile' }} 
+                    onAccountSettingsClick={() => { window.location.href = '/dashboard/accountSettings' }} 
+                    onSectionChange={(section) => { 
+                      if (section === 'dashboard') window.location.href = '/dashboard/visualise';
+                      else if (section === 'emissionData') window.location.href = '/dashboard/dataInput';
+                      else if (section === 'carbonSinks') window.location.href = '/dashboard/carbonSinks';
+                      else if (section === 'pathways') window.location.href = '/dashboard/suggestions';
+                      else if (section === 'reports') window.location.href = '/dashboard/reports';
+                    }}
                   />
+                  <main className="p-8 bg-white dark:bg-white flex-grow overflow-auto">
+                    <Routes>
+                      <Route path="/" element={<Navigate to="/dashboard/dataInput" />} />
+                      <Route path="/dataInput" element={<DataInput />} />
+                      <Route path="/carbonSinks" element={<CarbonSinks />} />
+                      <Route path="/visualise" element={<Visualization />} />
+                      <Route path="/suggestions" element={<Suggestions />} />
+                      <Route path="/myProfile" element={<MyProfile ownerData={ownerData} />} />
+                      <Route path="/accountSettings" element={<AccountSettings ownerData={ownerData} onSave={setOwnerData} />} />
+                      <Route path="/chartOne" element={<ChartOne />} />
+                      <Route path="/chartTwo" element={<ChartTwo />} />
+                      <Route path="/chartThree" element={<ChartThree />} />
+                      <Route path="/reports" element={
+                        <div>
+                          <h1 className="text-2xl font-bold mb-4">Reports</h1>
+                          <ExportOptions
+                            inputData={inputData}
+                            suggestions={suggestions}
+                          />
+                        </div>
+                      } />
+                      {/* Add more routes as needed */}
+                    </Routes>
+                  </main>
                 </div>
-              } />
-              {/* Add more routes as needed */}
-            </Routes>
-          </main>
-        </div>
-      </div>
+              </div>
+            ) : (
+              <Navigate to="/login" />
+            )
+          }
+        />
+      </Routes>
     </Router>
   );
 }

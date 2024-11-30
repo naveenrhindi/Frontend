@@ -15,11 +15,11 @@ function Sidebar() {
   };
 
   const menuItems = [
-    { id: 1, title: "DATA INPUT", icon: FaDatabase, path: "/dataInput" },
-    { id: 2, title: "CARBON SINKS", icon: FaTree, path: "/carbonSinks" },
-    { id: 3, title: "VISUALIZE", icon: FaChartBar, path: "/visualise" },
-    { id: 4, title: "SUGGESTIONS", icon: FaLightbulb, path: "/suggestions" },
-    { id: 5, title: "SETTINGS", icon: FaCog, path: "/accountSettings" }
+    { id: 1, title: "DATA INPUT", icon: FaDatabase, path: "/dashboard/dataInput" },
+    { id: 2, title: "CARBON SINKS", icon: FaTree, path: "/dashboard/carbonSinks" },
+    { id: 3, title: "VISUALIZE", icon: FaChartBar, path: "/dashboard/visualise" },
+    { id: 4, title: "SUGGESTIONS", icon: FaLightbulb, path: "/dashboard/suggestions" },
+    { id: 5, title: "SETTINGS", icon: FaCog, path: "/dashboard/accountSettings" }
   ];
 
   return (
