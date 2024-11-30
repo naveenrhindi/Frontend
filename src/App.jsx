@@ -57,6 +57,7 @@ const App = () => {
             <Routes>
               <Route path="/" element={<Navigate to="/dataInput" />} />
               <Route path="/dataInput" element={<DataInput />} />
+              <Route path="/carbonSinks" element={<CarbonSinks />} />
               <Route path="/visualise" element={<Visualization />} />
               <Route path="/suggestions" element={<Suggestions />} />
               <Route path="/myProfile" element={<MyProfile ownerData={ownerData} />} />
@@ -64,7 +65,6 @@ const App = () => {
               <Route path="/chartOne" element={<ChartOne />} />
               <Route path="/chartTwo" element={<ChartTwo />} />
               <Route path="/chartThree" element={<ChartThree />} />
-              <Route path="/carbonSinks" element={<CarbonSinks />} />
               <Route path="/reports" element={
                 <div>
                   <h1 className="text-2xl font-bold mb-4">Reports</h1>

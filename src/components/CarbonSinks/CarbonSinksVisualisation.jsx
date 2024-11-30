@@ -40,7 +40,7 @@ const StatsCard = ({
             {isNegative && <BsArrowDownShort className="text-xl" />}
           </span>
         </div>
-      </div>
+      </div> 
     </div>
   );
 };
