@@ -7,10 +7,10 @@ import Visualization from './components/Visualise/Visualise.jsx';
 import Suggestions from './components/Suggestions/Suggestion.jsx';
 import MyProfile from './components/UserProfile/MyProfile';
 import AccountSettings from './components/UserProfile/AccountSettings';
-import ChartOne from './components/Visualise/ChartOne'; // Import ChartOne component
-import ChartTwo from './components/Visualise/ChartTwo'; // Import ChartTwo component
-import ChartThree from './components/Visualise/ChartThree'; // Import ChartThree component
-import ExportOptions from './components/Export/ExportOptions'; // Correct path for ExportOptions component
+import ChartOne from './components/Visualise/ChartOne';
+import ChartTwo from './components/Visualise/ChartTwo';
+import ChartThree from './components/Visualise/ChartThree';
+import ExportOptions from './components/Export/ExportOptions';
 import CarbonSinks from './components/CarbonSinks/CarbonSinks';
 import LandingPage from './components/Landing/LandingPage';
 import Login from './components/Landing/Login';
@@ -39,70 +39,66 @@ const App = () => {
     { parameter: "Safety Improvement", value: "Conduct bi-weekly safety drills" },
   ];
 
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  // Temporarily disabled authentication
+  const [isAuthenticated, setIsAuthenticated] = useState(true);
 
   return (
     <Router>
       <Routes>
-        {/* Public routes */}
-        <Route path="/" element={<LandingPage />} />
-        <Route path="/login" element={<Login setIsAuthenticated={setIsAuthenticated} />} />
-        <Route path="/register" element={<Register setIsAuthenticated={setIsAuthenticated} />} />
+        {/* Temporarily redirecting landing page to dashboard */}
+        <Route path="/" element={<Navigate to="/dashboard" />} />
+        <Route path="/login" element={<Navigate to="/dashboard" />} />
+        <Route path="/register" element={<Navigate to="/dashboard" />} />
 
-        {/* Protected dashboard routes */}
+        {/* Dashboard routes (no authentication check) */}
         <Route
           path="/dashboard/*"
           element={
-            isAuthenticated ? (
-              <div className="flex h-screen overflow-hidden">
-                <Sidebar />
-                <div className="flex flex-col flex-grow bg-white">
-                  <Header 
-                    ownerData={ownerData}
-                    onProfileClick={() => { window.location.href = '/dashboard/myProfile' }} 
-                    onAccountSettingsClick={() => { window.location.href = '/dashboard/accountSettings' }} 
-                    onSectionChange={(section) => { 
-                      if (section === 'dashboard') window.location.href = '/dashboard/visualise';
-                      else if (section === 'emissionData') window.location.href = '/dashboard/dataInput';
-                      else if (section === 'carbonSinks') window.location.href = '/dashboard/carbonSinks';
-                      else if (section === 'pathways') window.location.href = '/dashboard/suggestions';
-                      else if (section === 'reports') window.location.href = '/dashboard/reports';
-                    }}
-                  />
-                  <main className="p-8 bg-white dark:bg-white flex-grow overflow-auto">
-                    <Routes>
-                      <Route path="/" element={<Navigate to="/dashboard/dataInput" />} />
-                      <Route path="/dataInput" element={<DataInput />} />
-                      <Route path="/carbonSinks" element={<CarbonSinks />} />
-                      <Route path="/visualise" element={<Visualization />} />
-                      <Route path="/suggestions" element={<Suggestions />} />
-                      <Route path="/myProfile" element={<MyProfile ownerData={ownerData} />} />
-                      <Route path="/accountSettings" element={<AccountSettings ownerData={ownerData} onSave={setOwnerData} />} />
-                      <Route path="/chartOne" element={<ChartOne />} />
-                      <Route path="/chartTwo" element={<ChartTwo />} />
-                      <Route path="/chartThree" element={<ChartThree />} />
-                      <Route path="/reports" element={
-                        <div>
-                          <h1 className="text-2xl font-bold mb-4">Reports</h1>
-                          <ExportOptions
-                            inputData={inputData}
-                            suggestions={suggestions}
-                          />
-                        </div>
-                      } />
-                      {/* Add more routes as needed */}
-                    </Routes>
-                  </main>
-                </div>
+            <div className="flex h-screen overflow-hidden">
+              <Sidebar />
+              <div className="flex flex-col flex-grow bg-white">
+                <Header 
+                  ownerData={ownerData}
+                  onProfileClick={() => { window.location.href = '/dashboard/myProfile' }} 
+                  onAccountSettingsClick={() => { window.location.href = '/dashboard/accountSettings' }} 
+                  onSectionChange={(section) => { 
+                    if (section === 'dashboard') window.location.href = '/dashboard/visualise';
+                    else if (section === 'emissionData') window.location.href = '/dashboard/dataInput';
+                    else if (section === 'carbonSinks') window.location.href = '/dashboard/carbonSinks';
+                    else if (section === 'pathways') window.location.href = '/dashboard/suggestions';
+                    else if (section === 'reports') window.location.href = '/dashboard/reports';
+                  }}
+                />
+                <main className="p-8 bg-white dark:bg-white flex-grow overflow-auto">
+                  <Routes>
+                    <Route path="/" element={<Navigate to="/dashboard/dataInput" />} />
+                    <Route path="/dataInput" element={<DataInput />} />
+                    <Route path="/carbonSinks" element={<CarbonSinks />} />
+                    <Route path="/visualise" element={<Visualization />} />
+                    <Route path="/suggestions" element={<Suggestions />} />
+                    <Route path="/myProfile" element={<MyProfile ownerData={ownerData} />} />
+                    <Route path="/accountSettings" element={<AccountSettings ownerData={ownerData} onSave={setOwnerData} />} />
+                    <Route path="/chartOne" element={<ChartOne />} />
+                    <Route path="/chartTwo" element={<ChartTwo />} />
+                    <Route path="/chartThree" element={<ChartThree />} />
+                    <Route path="/reports" element={
+                      <div>
+                        <h1 className="text-2xl font-bold mb-4">Reports</h1>
+                        <ExportOptions
+                          inputData={inputData}
+                          suggestions={suggestions}
+                        />
+                      </div>
+                    } />
+                  </Routes>
+                </main>
               </div>
-            ) : (
-              <Navigate to="/login" />
-            )
+            </div>
           }
         />
       </Routes>
     </Router>
   );
-}
+};
 
 export default App;

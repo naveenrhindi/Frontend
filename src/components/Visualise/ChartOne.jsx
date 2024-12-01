@@ -1,13 +1,42 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import ReactApexChart from 'react-apexcharts';
 
 const ChartOne = ({ title, dateRange, data }) => {
+  const [series, setSeries] = useState([
+    { name: data[0].name, data: Array(12).fill(0) },
+    { name: data[1].name, data: Array(12).fill(0) }
+  ]);
+
+  useEffect(() => {
+    let line1Timer = setTimeout(() => {
+      setSeries([
+        { ...data[0] },
+        { name: data[1].name, data: Array(12).fill(0) }
+      ]);
+      
+      let line2Timer = setTimeout(() => {
+        setSeries(data);
+      }, 1000);
+
+      return () => clearTimeout(line2Timer);
+    }, 100);
+
+    return () => clearTimeout(line1Timer);
+  }, [data]);
+
   const options = {
     legend: { show: false, position: 'top', horizontalAlign: 'left' },
     colors: ['#006400', '#90EE90'], // Dark Green and Light Green (PaleGreen)
     chart: {
       height: '100%',
       type: 'area',
+      animations: {
+        enabled: true,
+        easing: 'linear',
+        dynamicAnimation: {
+          speed: 1000
+        }
+      },
       dropShadow: {
         enabled: true,
         color: '#623CEA14',
@@ -85,7 +114,7 @@ const ChartOne = ({ title, dateRange, data }) => {
 
       <div>
         <div id="chartOne" className="w-full h-96">
-          <ReactApexChart options={options} series={data} type="area" height="100%" />
+          <ReactApexChart options={options} series={series} type="area" height="100%" />
         </div>
       </div>
     </div>
