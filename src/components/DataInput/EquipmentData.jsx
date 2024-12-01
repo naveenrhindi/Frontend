@@ -1,11 +1,33 @@
 import React from 'react';
+import SelectGroup from './SelectGroup';
 
 const ResourceUsage = ({ electricityUsage, setElectricityUsage, waterUsage, setWaterUsage, emissionLevel, setEmissionLevel }) => (
   <div className="bg-white dark:bg-gray-800 p-4 rounded-lg">
-    <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-2">Resource Usage</h3>
+    <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-2">Equipment Usage</h3>
+
+    <SelectGroup
+      label="Equipment Type Used"
+      options={[
+        'Continuous Mining Machines',
+        'Roof Bolters',
+        'Shuttle Cars',
+        'Longwall Systems',
+        'Ventilation Systems',
+        'Water Pumps',
+        'Conveyor Systems'
+      ]}
+      onChange={() => {}}
+    />
+
+    <SelectGroup
+      label="Equipment Fuel Type"
+      options={['Diesel', 'Electric', 'Hybrid', 'Pneumatic']}
+      onChange={() => {}}
+    />
+
     <div className="mb-4">
       <label className="block text-gray-700 dark:text-gray-300 mb-2" htmlFor="electricityUsage">
-        Electricity Usage (kWh)
+        Operating Hours per Day
       </label>
       <input
         type="number"
@@ -16,12 +38,13 @@ const ResourceUsage = ({ electricityUsage, setElectricityUsage, waterUsage, setW
         focus:border-[#FFA500] hover:border-[#FFA500]"
         value={electricityUsage}
         onChange={(e) => setElectricityUsage(e.target.value)}
-        placeholder="Enter electricity usage"
+        placeholder="Enter operating hours"
       />
     </div>
+
     <div className="mb-4">
       <label className="block text-gray-700 dark:text-gray-300 mb-2" htmlFor="waterUsage">
-        Water Usage (cubic meters)
+        Average Fuel Consumption per Hour (liters/kWh)
       </label>
       <input
         type="number"
@@ -32,12 +55,13 @@ const ResourceUsage = ({ electricityUsage, setElectricityUsage, waterUsage, setW
         focus:border-[#FFA500] hover:border-[#FFA500]"
         value={waterUsage}
         onChange={(e) => setWaterUsage(e.target.value)}
-        placeholder="Enter water usage"
+        placeholder="Enter average fuel consumption"
       />
     </div>
+
     <div className="mb-4">
       <label className="block text-gray-700 dark:text-gray-300 mb-2" htmlFor="emissionLevel">
-        Emission Level (tons CO2)
+        Equipment Efficiency Rating (%)
       </label>
       <input
         type="number"
@@ -48,7 +72,9 @@ const ResourceUsage = ({ electricityUsage, setElectricityUsage, waterUsage, setW
         focus:border-[#FFA500] hover:border-[#FFA500]"
         value={emissionLevel}
         onChange={(e) => setEmissionLevel(e.target.value)}
-        placeholder="Enter emission level"
+        placeholder="Enter equipment efficiency"
+        min="0"
+        max="100"
       />
     </div>
   </div>

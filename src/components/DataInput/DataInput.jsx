@@ -10,10 +10,13 @@ import {
   Box,
   createTheme,
   ThemeProvider,
+  Alert,
+  Snackbar,
 } from '@mui/material';
-import FuelInformation from './FuelInformation';
-import ProductionData from './ProductionData';
-import ResourceUsage from './ResourceUsage';
+import ExcavationData from './ExcavationData';
+import TransportationData from './TransportationData';
+import EquipmentData from './EquipmentData';
+import MethaneEntrapment from './MethaneEntrapment';
 
 // Custom theme for orange and green colors
 const theme = createTheme({
@@ -30,69 +33,108 @@ const theme = createTheme({
 
 const DataInput = () => {
   const [activeStep, setActiveStep] = useState(0);
-  const [fuelType, setFuelType] = useState('');
+  
+  // Excavation Data State
+  const [excavationType, setExcavationType] = useState('');
+  const [excavationAmount, setExcavationAmount] = useState('');
+  
+  // Transportation Data State
+  const [transportAmount, setTransportAmount] = useState('');
+  
+  // Equipment Data State
+  const [operatingHours, setOperatingHours] = useState('');
   const [fuelConsumption, setFuelConsumption] = useState('');
-  const [coalProduction, setCoalProduction] = useState('');
-  const [electricityUsage, setElectricityUsage] = useState('');
-  const [waterUsage, setWaterUsage] = useState('');
-  const [emissionLevel, setEmissionLevel] = useState('');
+  const [efficiency, setEfficiency] = useState('');
+  
+  // Methane Data State
+  const [methaneCapture, setMethaneCapture] = useState('');
+
+  const [openAlert, setOpenAlert] = useState(false);
 
   const handleNext = () => setActiveStep((prev) => prev + 1);
   const handleBack = () => setActiveStep((prev) => prev - 1);
   const handleReset = () => {
     setActiveStep(0);
-    setFuelType('');
+    setExcavationType('');
+    setExcavationAmount('');
+    setTransportAmount('');
+    setOperatingHours('');
     setFuelConsumption('');
-    setCoalProduction('');
-    setElectricityUsage('');
-    setWaterUsage('');
-    setEmissionLevel('');
+    setEfficiency('');
+    setMethaneCapture('');
+    setOpenAlert(false);
   };
 
   const handleSubmit = () => {
     const inputData = {
-      fuelType,
-      fuelConsumption,
-      coalProduction,
-      electricityUsage,
-      waterUsage,
-      emissionLevel,
+      excavation: {
+        type: excavationType,
+        amount: excavationAmount,
+      },
+      transportation: {
+        amount: transportAmount,
+      },
+      equipment: {
+        operatingHours,
+        fuelConsumption,
+        efficiency,
+      },
+      methane: {
+        captureRate: methaneCapture,
+      },
     };
     console.log('Submitted Data:', inputData);
-    handleReset();
+    setOpenAlert(true);
+    setTimeout(handleReset, 2000);
+  };
+
+  const handleCloseAlert = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setOpenAlert(false);
   };
 
   const steps = [
     {
-      label: 'Fuel Information',
+      label: 'Excavation Data',
       content: (
-        <FuelInformation
-          fuelType={fuelType}
-          setFuelType={setFuelType}
-          fuelConsumption={fuelConsumption}
-          setFuelConsumption={setFuelConsumption}
+        <ExcavationData
+          fuelType={excavationType}
+          setFuelType={setExcavationType}
+          fuelConsumption={excavationAmount}
+          setFuelConsumption={setExcavationAmount}
         />
       ),
     },
     {
-      label: 'Production Data',
+      label: 'Transportation Data',
       content: (
-        <ProductionData
-          coalProduction={coalProduction}
-          setCoalProduction={setCoalProduction}
+        <TransportationData
+          coalProduction={transportAmount}
+          setCoalProduction={setTransportAmount}
         />
       ),
     },
     {
-      label: 'Resource Usage',
+      label: 'Equipment Usage',
       content: (
-        <ResourceUsage
-          electricityUsage={electricityUsage}
-          setElectricityUsage={setElectricityUsage}
-          waterUsage={waterUsage}
-          setWaterUsage={setWaterUsage}
-          emissionLevel={emissionLevel}
-          setEmissionLevel={setEmissionLevel}
+        <EquipmentData
+          electricityUsage={operatingHours}
+          setElectricityUsage={setOperatingHours}
+          waterUsage={fuelConsumption}
+          setWaterUsage={setFuelConsumption}
+          emissionLevel={efficiency}
+          setEmissionLevel={setEfficiency}
+        />
+      ),
+    },
+    {
+      label: 'Methane Entrapment',
+      content: (
+        <MethaneEntrapment
+          methaneCapture={methaneCapture}
+          setMethaneCapture={setMethaneCapture}
         />
       ),
     },
@@ -101,7 +143,7 @@ const DataInput = () => {
   return (
     <ThemeProvider theme={theme}>
       <div className="bg-white p-6 rounded-lg shadow-md mt-8 ml-8">
-        <h2 className="text-2xl font-bold mb-4 text-gray-800">Data Input</h2>
+        <h2 className="text-2xl font-bold mb-4 text-gray-800">Mining Operation Data Input</h2>
         <Stepper
           activeStep={activeStep}
           orientation="vertical"
@@ -251,6 +293,16 @@ const DataInput = () => {
             </Button>
           </Paper>
         )}
+        <Snackbar 
+          open={openAlert} 
+          autoHideDuration={2000} 
+          onClose={handleCloseAlert}
+          anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        >
+          <Alert onClose={handleCloseAlert} severity="success" sx={{ width: '100%' }}>
+            Data submitted successfully!
+          </Alert>
+        </Snackbar>
       </div>
     </ThemeProvider>
   );
