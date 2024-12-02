@@ -1,42 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import ReactApexChart from 'react-apexcharts';
 
 const ChartOne = ({ title, dateRange, data }) => {
-  const [series, setSeries] = useState([
-    { name: data[0].name, data: Array(12).fill(0) },
-    { name: data[1].name, data: Array(12).fill(0) }
-  ]);
-
-  useEffect(() => {
-    let line1Timer = setTimeout(() => {
-      setSeries([
-        { ...data[0] },
-        { name: data[1].name, data: Array(12).fill(0) }
-      ]);
-      
-      let line2Timer = setTimeout(() => {
-        setSeries(data);
-      }, 1000);
-
-      return () => clearTimeout(line2Timer);
-    }, 100);
-
-    return () => clearTimeout(line1Timer);
-  }, [data]);
-
   const options = {
     legend: { show: false, position: 'top', horizontalAlign: 'left' },
     colors: ['#006400', '#90EE90'], // Dark Green and Light Green (PaleGreen)
     chart: {
       height: '100%',
       type: 'area',
-      animations: {
-        enabled: true,
-        easing: 'linear',
-        dynamicAnimation: {
-          speed: 1000
-        }
-      },
       dropShadow: {
         enabled: true,
         color: '#623CEA14',
@@ -101,20 +72,14 @@ const ChartOne = ({ title, dateRange, data }) => {
         </div>
       </div>
 
-      <div className="flex flex-wrap items-center space-x-4 mb-4">
-        <div className="flex items-center space-x-2">
-          <span className="w-3 h-3 ml-6 rounded-full bg-[#006400]"></span>
-          <span className="text-sm text-black">Coal Production</span>
-        </div>
-        <div className="flex items-center space-x-2">
-          <span className="w-3 h-3 rounded-full bg-[#90EE90]"></span>
-          <span className="text-sm text-black">Fuel Consumption</span>
-        </div>
-      </div>
-
       <div>
-        <div id="chartOne" className="w-full h-96">
-          <ReactApexChart options={options} series={series} type="area" height="100%" />
+        <div id="chartOne" className="-ml-5 h-[355px] w-[105%]">
+          <ReactApexChart
+            options={options}
+            series={data}
+            type="area"
+            height={350}
+          />
         </div>
       </div>
     </div>
