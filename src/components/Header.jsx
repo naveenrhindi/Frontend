@@ -23,11 +23,11 @@ function Header({ onProfileClick, onAccountSettingsClick, onSectionChange, owner
   };
 
   const navItems = [
-    { label: 'Dashboard', path: '/visualise', section: null },
-    { label: 'Emission Data', path: null, section: 'emissionData' },
-    { label: 'Carbon Sinks', path: null, section: 'carbonSinks' },
-    { label: 'Pathways', path: '/suggestions', section: null },
-    { label: 'Reports', path: null, section: 'reports' }
+    { label: 'Dashboard', path: '/dashboard/visualise' },
+    { label: 'Emission Data', path: '/dashboard/dataInput' },
+    { label: 'Carbon Sinks', path: '/dashboard/carbonSinks' },
+    { label: 'Pathways', path: '/dashboard/suggestions' },
+    { label: 'Reports', path: '/dashboard/reports' }
   ];
 
   return (

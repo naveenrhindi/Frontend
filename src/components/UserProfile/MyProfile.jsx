@@ -37,7 +37,13 @@ const MyProfile = ({ ownerData }) => {
   return (
     <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md mt-8 flex flex-col items-center">
       {/* Coal Mine Image */}
-      <div className="relative w-full h-48 bg-cover bg-center rounded-lg mb-16" style={{ backgroundImage: `url('${bgImage}')` }}>
+      <div className="relative w-full h-48 bg-cover bg-c
+      
+      
+      
+      
+      
+      nter rounded-lg mb-16" style={{ backgroundImage: `url('${bgImage}')` }}>
         {/* Change Background Image Icon */}
         <label htmlFor="bgImageInput" className="absolute top-2 right-2 cursor-pointer">
           <FaCamera className="text-white bg-blue-500 rounded-full p-1 w-8 h-8" />
