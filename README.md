@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Coal Mine Owner Dashboard
 =========================
 
@@ -79,3 +80,6 @@ src
 ├── Routes
 │   └── routes.js
 └── App.js
+=======
+# Front
+>>>>>>> 1fb7345c408ff5feea0d2da45e7e8124bca45d69
