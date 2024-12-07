@@ -17,6 +17,7 @@ import ExcavationData from './ExcavationData';
 import TransportationData from './TransportationData';
 import EquipmentData from './EquipmentData';
 import MethaneEntrapment from './MethaneEntrapment';
+import axios from 'axios';
 
 // Custom theme for orange and green colors
 const theme = createTheme({
@@ -33,59 +34,167 @@ const theme = createTheme({
 
 const DataInput = () => {
   const [activeStep, setActiveStep] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
   
-  // Excavation Data State
-  const [excavationType, setExcavationType] = useState('');
-  const [excavationAmount, setExcavationAmount] = useState('');
-  
-  // Transportation Data State
-  const [transportAmount, setTransportAmount] = useState('');
-  
-  // Equipment Data State
-  const [operatingHours, setOperatingHours] = useState('');
-  const [fuelConsumption, setFuelConsumption] = useState('');
-  const [efficiency, setEfficiency] = useState('');
-  
-  // Methane Data State
-  const [methaneCapture, setMethaneCapture] = useState('');
+  // Form Data State
+  const [formData, setFormData] = useState({
+    excavation: {
+      coalAmount: '',
+      method: '',
+      fuelType: '',
+      distance: '',
+      equipmentUsed: ''
+    },
+    transportation: {
+      coalTransported: '',
+      mode: '',
+      fuelType: '',
+      distancePerTrip: '',
+      vehicleCapacity: '',
+      tripsPerDay: ''
+    },
+    equipmentUsage: {
+      type: '',
+      fuelType: '',
+      operatingHours: '',
+      fuelConsumptionPerHour: ''
+    },
+    methaneEntrapment: {
+      captureRate: '',
+      utilizationMethod: '',
+      dischargeAmount: '',
+      conversionEfficiency: ''
+    }
+  });
 
   const [openAlert, setOpenAlert] = useState(false);
+  const [alertSeverity, setAlertSeverity] = useState('success');
+  const [alertMessage, setAlertMessage] = useState('');
 
   const handleNext = () => setActiveStep((prev) => prev + 1);
   const handleBack = () => setActiveStep((prev) => prev - 1);
   const handleReset = () => {
     setActiveStep(0);
-    setExcavationType('');
-    setExcavationAmount('');
-    setTransportAmount('');
-    setOperatingHours('');
-    setFuelConsumption('');
-    setEfficiency('');
-    setMethaneCapture('');
+    setFormData({
+      excavation: {
+        coalAmount: '',
+        method: '',
+        fuelType: '',
+        distance: '',
+        equipmentUsed: ''
+      },
+      transportation: {
+        coalTransported: '',
+        mode: '',
+        fuelType: '',
+        distancePerTrip: '',
+        vehicleCapacity: '',
+        tripsPerDay: ''
+      },
+      equipmentUsage: {
+        type: '',
+        fuelType: '',
+        operatingHours: '',
+        fuelConsumptionPerHour: ''
+      },
+      methaneEntrapment: {
+        captureRate: '',
+        utilizationMethod: '',
+        dischargeAmount: '',
+        conversionEfficiency: ''
+      }
+    });
     setOpenAlert(false);
   };
 
-  const handleSubmit = () => {
-    const inputData = {
-      excavation: {
-        type: excavationType,
-        amount: excavationAmount,
-      },
-      transportation: {
-        amount: transportAmount,
-      },
-      equipment: {
-        operatingHours,
-        fuelConsumption,
-        efficiency,
-      },
-      methane: {
-        captureRate: methaneCapture,
-      },
-    };
-    console.log('Submitted Data:', inputData);
-    setOpenAlert(true);
-    setTimeout(handleReset, 2000);
+  const handleSubmit = async () => {
+    try {
+      setLoading(true);
+      setError('');
+      
+      const token = localStorage.getItem('token');
+      if (!token) {
+        setAlertSeverity('error');
+        setAlertMessage('Please login to submit data');
+        setOpenAlert(true);
+        return;
+      }
+
+      const baseURL = 'http://localhost:5001';
+      
+      // Step 1: Submit emission data
+      const submitResponse = await axios.post(
+        `${baseURL}/api/emissions/add-emissions`,
+        formData,
+        {
+          headers: {
+            'Authorization': token.startsWith('Bearer ') ? token : `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+
+      if (submitResponse.data) {
+        // Step 2: Trigger emission calculations
+        const calculationResponse = await axios.get(
+          `${baseURL}/api/emissions/calculate-emissions`,
+          {
+            headers: {
+              'Authorization': token.startsWith('Bearer ') ? token : `Bearer ${token}`
+            }
+          }
+        );
+
+        if (calculationResponse.data) {
+          // Step 3: Get the calculated results
+          const getCalculationsResponse = await axios.get(
+            `${baseURL}/api/emissions/get-emission-calculations`,
+            {
+              headers: {
+                'Authorization': token.startsWith('Bearer ') ? token : `Bearer ${token}`
+              }
+            }
+          );
+
+          setAlertSeverity('success');
+          setAlertMessage('Data submitted and calculations completed successfully!');
+          setOpenAlert(true);
+          
+          // Emit event with calculation results for visualization
+          const calculationEvent = new CustomEvent('emissionCalculated', {
+            detail: getCalculationsResponse.data
+          });
+          window.dispatchEvent(calculationEvent);
+          
+          setTimeout(handleReset, 2000);
+        }
+      }
+    } catch (err) {
+      console.error('Submission error:', err);
+      setAlertSeverity('error');
+      
+      if (!localStorage.getItem('token')) {
+        setAlertMessage('Please login to submit data');
+      } else if (err.response?.status === 400) {
+        setAlertMessage('Invalid or expired token. Please login again.');
+      } else if (err.code === 'ECONNABORTED') {
+        setAlertMessage('Connection timeout. Please try again.');
+      } else if (!err.response) {
+        setAlertMessage('Network error. Please check your connection.');
+      } else if (err.response.status === 404) {
+        setAlertMessage('API endpoint not found. Please contact support.');
+      } else if (err.response.status === 401) {
+        setAlertMessage('Authentication failed. Please login again.');
+      } else {
+        setAlertMessage(err.response?.data?.error || 'Error submitting data. Please try again.');
+      }
+      
+      setError(err.response?.data?.error || 'Error submitting emission data');
+      setOpenAlert(true);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleCloseAlert = (event, reason) => {
@@ -100,10 +209,8 @@ const DataInput = () => {
       label: 'Excavation Data',
       content: (
         <ExcavationData
-          fuelType={excavationType}
-          setFuelType={setExcavationType}
-          fuelConsumption={excavationAmount}
-          setFuelConsumption={setExcavationAmount}
+          formData={formData}
+          setFormData={setFormData}
         />
       ),
     },
@@ -111,8 +218,8 @@ const DataInput = () => {
       label: 'Transportation Data',
       content: (
         <TransportationData
-          coalProduction={transportAmount}
-          setCoalProduction={setTransportAmount}
+          formData={formData}
+          setFormData={setFormData}
         />
       ),
     },
@@ -120,12 +227,8 @@ const DataInput = () => {
       label: 'Equipment Usage',
       content: (
         <EquipmentData
-          electricityUsage={operatingHours}
-          setElectricityUsage={setOperatingHours}
-          waterUsage={fuelConsumption}
-          setWaterUsage={setFuelConsumption}
-          emissionLevel={efficiency}
-          setEmissionLevel={setEfficiency}
+          formData={formData}
+          setFormData={setFormData}
         />
       ),
     },
@@ -133,8 +236,8 @@ const DataInput = () => {
       label: 'Methane Entrapment',
       content: (
         <MethaneEntrapment
-          methaneCapture={methaneCapture}
-          setMethaneCapture={setMethaneCapture}
+          formData={formData}
+          setFormData={setFormData}
         />
       ),
     },
@@ -181,6 +284,16 @@ const DataInput = () => {
               borderColor: '#E0E0E0',
               borderWidth: '0 0 0 2px',
             },
+            '& .MuiStepLabel-label': {
+              transition: 'color 0.3s ease-in-out',
+              '&.Mui-active': {
+                color: '#FFA500',
+                fontWeight: 'bold',
+              },
+              '&.Mui-completed': {
+                color: '#32CD32',
+              },
+            },
             '@keyframes pulse': {
               '0%': {
                 transform: 'scale(1)',
@@ -200,16 +313,6 @@ const DataInput = () => {
               '100%': {
                 height: '100%',
                 opacity: 1,
-              },
-            },
-            '& .MuiStepLabel-label': {
-              transition: 'color 0.3s ease-in-out',
-              '&.Mui-active': {
-                color: '#FFA500',
-                fontWeight: 'bold',
-              },
-              '&.Mui-completed': {
-                color: '#32CD32',
               },
             },
           }}
@@ -235,8 +338,9 @@ const DataInput = () => {
                           color: 'white',
                         },
                       }}
+                      disabled={loading}
                     >
-                      {index === steps.length - 1 ? 'Submit' : 'Continue'}
+                      {index === steps.length - 1 ? (loading ? 'Submitting...' : 'Submit') : 'Continue'}
                     </Button>
                     <Button
                       variant="text"
@@ -293,14 +397,19 @@ const DataInput = () => {
             </Button>
           </Paper>
         )}
+
         <Snackbar 
           open={openAlert} 
-          autoHideDuration={2000} 
+          autoHideDuration={6000} 
           onClose={handleCloseAlert}
           anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
         >
-          <Alert onClose={handleCloseAlert} severity="success" sx={{ width: '100%' }}>
-            Data submitted successfully!
+          <Alert 
+            onClose={handleCloseAlert} 
+            severity={alertSeverity}
+            sx={{ width: '100%' }}
+          >
+            {alertMessage}
           </Alert>
         </Snackbar>
       </div>

@@ -1,141 +1,148 @@
-import React, { useState } from 'react';
-import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
-import Header from './components/Header';
-import Sidebar from './components/Sidebar';
-import DataInput from './components/DataInput/DataInput.jsx';
-import Visualization from './components/Visualise/Visualise.jsx';
-import Suggestions from './components/Suggestions/Suggestion.jsx';
-import MyProfile from './components/UserProfile/MyProfile';
-import AccountSettings from './components/UserProfile/AccountSettings';
-import ChartOne from './components/Visualise/ChartOne';
-import ChartTwo from './components/Visualise/ChartTwo';
-import ChartThree from './components/Visualise/ChartThree';
-import ExportOptions from './components/Export/ExportOptions';
-import CarbonSinks from './components/CarbonSinks/CarbonSinks';
-import LandingPage from './components/Landing/LandingPage';
+import React, { useEffect, useState } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { isAuthenticated, getCurrentUser } from './services/userService';
+
+// Landing components
 import Login from './components/Landing/Login';
 import Register from './components/Landing/Register';
 
-const App = () => {
-  const [ownerData, setOwnerData] = useState({
-    name: "John Doe",
-    email: "john.doe@example.com",
-    phone: "123-456-7890",
-    address: "123 Coal Mine Road, Mining Town",
-    coalMineName: "John's Coal Mine",
-    about: "Riverstone Coal Mine is a leading coal mining operation located in India, established in 1985. With a focus on safety, sustainability, and innovation, we extract high-quality coal using advanced mining techniques. Our commitment to reducing environmental impact and supporting local communities is at the core of our operations through continuous investment in modern technologies."
-  });
+// Dashboard components
+import Header from './components/Header';
+import Visualise from './components/Visualise/Visualise';
+import DataInput from './components/DataInput/DataInput';
+import CarbonSinks from './components/CarbonSinks/CarbonSinks';
+import Suggestions from './components/Suggestions/Suggestion';
+import Reports from './components/Export/ExportOptions';
+import MyProfile from './components/UserProfile/MyProfile';
+import AccountSettings from './components/UserProfile/AccountSettings';
 
-  const inputData = [
-    { parameter: "Daily Production (tons)", value: 1500 },
-    { parameter: "Employee Count", value: 200 },
-    { parameter: "Safety Incidents", value: 2 },
-    { parameter: "Operational Hours", value: 24 },
-  ];
-  
-  const suggestions = [
-    { parameter: "Emission Reduction", value: "Implement scrubbers to reduce emissions by 15%" },
-    { parameter: "Water Usage Optimization", value: "Recycle 50% of water used in operations" },
-    { parameter: "Safety Improvement", value: "Conduct bi-weekly safety drills" },
-  ];
+// Protected Route component
+const ProtectedRoute = ({ children }) => {
+  if (!isAuthenticated()) {
+    return <Navigate to="/login" replace />;
+  }
+  return children;
+};
 
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+const DashboardLayout = ({ children }) => {
+  const [user, setUser] = useState(getCurrentUser());
 
-  const handleLogin = () => {
-    setIsAuthenticated(true);
-  };
+  useEffect(() => {
+    const handleStorageChange = () => {
+      setUser(getCurrentUser());
+    };
 
-  const handleLogout = () => {
-    setIsAuthenticated(false);
-  };
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, []);
 
-  const handleRegister = async () => {
-    return new Promise((resolve) => {
-      setIsAuthenticated(true);
-      resolve();
-    });
-  };
+  // Transform user data for Header component
+  const headerData = user ? {
+    name: user.fullname || user.username,
+    email: user.email,
+    role: "User",
+    location: user.location
+  } : {};
 
+  return (
+    <div className="min-h-screen bg-gray-100">
+      <Header ownerData={headerData} />
+      <main className="container mx-auto px-4 py-8">
+        {children}
+      </main>
+    </div>
+  );
+};
+
+function App() {
   return (
     <Router>
       <Routes>
         {/* Public routes */}
-        <Route path="/" element={<LandingPage />} />
-        <Route
-          path="/login"
-          element={
-            !isAuthenticated ? (
-              <Login onLogin={handleLogin} />
-            ) : (
-              <Navigate to="/dashboard" replace />
-            )
-          }
-        />
-        <Route
-          path="/register"
-          element={
-            !isAuthenticated ? (
-              <Register onRegister={handleRegister} />
-            ) : (
-              <Navigate to="/dashboard" replace />
-            )
-          }
-        />
-
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        
         {/* Protected dashboard routes */}
-        <Route
-          path="/dashboard/*"
-          element={
-            isAuthenticated ? (
-              <div className="flex h-screen overflow-hidden">
-                <Sidebar />
-                <div className="flex flex-col flex-grow bg-white">
-                  <Header 
-                    ownerData={ownerData}
-                    onProfileClick={() => { window.location.href = '/dashboard/myProfile' }} 
-                    onAccountSettingsClick={() => { window.location.href = '/dashboard/accountSettings' }} 
-                    onSectionChange={(section) => { 
-                      if (section === 'dashboard') window.location.href = '/dashboard/visualise';
-                      else if (section === 'emissionData') window.location.href = '/dashboard/dataInput';
-                      else if (section === 'carbonSinks') window.location.href = '/dashboard/carbonSinks';
-                      else if (section === 'pathways') window.location.href = '/dashboard/suggestions';
-                      else if (section === 'reports') window.location.href = '/dashboard/reports';
-                    }}
-                    onLogout={handleLogout}
-                  />
-                  <main className="p-8 bg-white dark:bg-white flex-grow overflow-auto">
-                    <Routes>
-                      <Route path="/" element={<Navigate to="/dashboard/dataInput" />} />
-                      <Route path="/dataInput" element={<DataInput />} />
-                      <Route path="/carbonSinks" element={<CarbonSinks />} />
-                      <Route path="/visualise" element={<Visualization />} />
-                      <Route path="/suggestions" element={<Suggestions />} />
-                      <Route path="/myProfile" element={<MyProfile ownerData={ownerData} />} />
-                      <Route path="/accountSettings" element={<AccountSettings ownerData={ownerData} onSave={setOwnerData} />} />
-                      <Route path="/chartOne" element={<ChartOne />} />
-                      <Route path="/chartTwo" element={<ChartTwo />} />
-                      <Route path="/chartThree" element={<ChartThree />} />
-                      <Route path="/reports" element={
-                        <div>
-                          <h1 className="text-2xl font-bold mb-4">Reports</h1>
-                          <ExportOptions
-                            inputData={inputData}
-                            suggestions={suggestions}
-                          />
-                        </div>
-                      } />
-                    </Routes>
-                  </main>
-                </div>
-              </div>
-            ) : (
-              <Navigate to="/login" replace />
-            )
-          }
-        />
+        <Route path="/dashboard" element={
+          <ProtectedRoute>
+            <DashboardLayout>
+              <Visualise />
+            </DashboardLayout>
+          </ProtectedRoute>
+        } />
+        
+        <Route path="/dashboard/visualise" element={
+          <ProtectedRoute>
+            <DashboardLayout>
+              <Visualise />
+            </DashboardLayout>
+          </ProtectedRoute>
+        } />
+        
+        <Route path="/dashboard/dataInput" element={
+          <ProtectedRoute>
+            <DashboardLayout>
+              <DataInput />
+            </DashboardLayout>
+          </ProtectedRoute>
+        } />
+        
+        <Route path="/dashboard/carbonSinks" element={
+          <ProtectedRoute>
+            <DashboardLayout>
+              <CarbonSinks />
+            </DashboardLayout>
+          </ProtectedRoute>
+        } />
+        
+        <Route path="/dashboard/suggestions" element={
+          <ProtectedRoute>
+            <DashboardLayout>
+              <Suggestions />
+            </DashboardLayout>
+          </ProtectedRoute>
+        } />
+        
+        <Route path="/dashboard/reports" element={
+          <ProtectedRoute>
+            <DashboardLayout>
+              <Reports />
+            </DashboardLayout>
+          </ProtectedRoute>
+        } />
+        
+        <Route path="/dashboard/myProfile" element={
+          <ProtectedRoute>
+            <DashboardLayout>
+              <MyProfile />
+            </DashboardLayout>
+          </ProtectedRoute>
+        } />
+        
+        <Route path="/dashboard/accountSettings" element={
+          <ProtectedRoute>
+            <DashboardLayout>
+              <AccountSettings />
+            </DashboardLayout>
+          </ProtectedRoute>
+        } />
+
+        {/* Redirect root to dashboard if authenticated, otherwise to login */}
+        <Route path="/" element={
+          isAuthenticated() ? 
+            <Navigate to="/dashboard" replace /> : 
+            <Navigate to="/login" replace />
+        } />
+
+        {/* Catch all route - redirect to dashboard if authenticated, otherwise to login */}
+        <Route path="*" element={
+          isAuthenticated() ? 
+            <Navigate to="/dashboard" replace /> : 
+            <Navigate to="/login" replace />
+        } />
       </Routes>
     </Router>
   );
-};
+}
 
 export default App;

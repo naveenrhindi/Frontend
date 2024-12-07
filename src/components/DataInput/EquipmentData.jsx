@@ -1,83 +1,129 @@
 import React from 'react';
-import SelectGroup from './SelectGroup';
+import {
+  TextField,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Box,
+} from '@mui/material';
 
-const ResourceUsage = ({ electricityUsage, setElectricityUsage, waterUsage, setWaterUsage, emissionLevel, setEmissionLevel }) => (
-  <div className="bg-white dark:bg-gray-800 p-4 rounded-lg">
-    <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-2">Equipment Usage</h3>
+const EquipmentData = ({ formData, setFormData }) => {
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      equipmentUsage: {
+        ...prev.equipmentUsage,
+        [name]: value
+      }
+    }));
+  };
 
-    <SelectGroup
-      label="Equipment Type Used"
-      options={[
-        'Continuous Mining Machines',
-        'Roof Bolters',
-        'Shuttle Cars',
-        'Longwall Systems',
-        'Ventilation Systems',
-        'Water Pumps',
-        'Conveyor Systems'
-      ]}
-      onChange={() => {}}
-    />
+  return (
+    <Box className="space-y-4">
+      <FormControl fullWidth required>
+        <InputLabel id="type-label" sx={{ '&.Mui-focused': { color: '#FFA500' } }}>
+          Equipment Type
+        </InputLabel>
+        <Select
+          labelId="type-label"
+          name="type"
+          value={formData.equipmentUsage.type}
+          label="Equipment Type"
+          onChange={handleChange}
+          sx={{
+            '&:hover .MuiOutlinedInput-notchedOutline': {
+              borderColor: '#FFA500',
+            },
+            '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+              borderColor: '#FFA500',
+            },
+          }}
+        >
+          <MenuItem value="Excavator">Excavator</MenuItem>
+          <MenuItem value="Loader">Loader</MenuItem>
+          <MenuItem value="Drill">Drill</MenuItem>
+          <MenuItem value="Crusher">Crusher</MenuItem>
+          <MenuItem value="Conveyor">Conveyor</MenuItem>
+        </Select>
+      </FormControl>
 
-    <SelectGroup
-      label="Equipment Fuel Type"
-      options={['Diesel', 'Electric', 'Hybrid', 'Pneumatic']}
-      onChange={() => {}}
-    />
+      <FormControl fullWidth required>
+        <InputLabel id="fuel-type-label" sx={{ '&.Mui-focused': { color: '#FFA500' } }}>
+          Fuel Type
+        </InputLabel>
+        <Select
+          labelId="fuel-type-label"
+          name="fuelType"
+          value={formData.equipmentUsage.fuelType}
+          label="Fuel Type"
+          onChange={handleChange}
+          sx={{
+            '&:hover .MuiOutlinedInput-notchedOutline': {
+              borderColor: '#FFA500',
+            },
+            '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+              borderColor: '#FFA500',
+            },
+          }}
+        >
+          <MenuItem value="Diesel">Diesel</MenuItem>
+          <MenuItem value="Electric">Electric</MenuItem>
+          <MenuItem value="Hybrid">Hybrid</MenuItem>
+          <MenuItem value="Natural Gas">Natural Gas</MenuItem>
+        </Select>
+      </FormControl>
 
-    <div className="mb-4">
-      <label className="block text-gray-700 dark:text-gray-300 mb-2" htmlFor="electricityUsage">
-        Operating Hours per Day
-      </label>
-      <input
+      <TextField
+        fullWidth
+        required
+        label="Operating Hours"
+        name="operatingHours"
         type="number"
-        id="electricityUsage"
-        className="w-full p-2 border border-gray-300 rounded 
-        bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 
-        focus:outline-none focus:ring-1 focus:ring-[#FFA500] 
-        focus:border-[#FFA500] hover:border-[#FFA500]"
-        value={electricityUsage}
-        onChange={(e) => setElectricityUsage(e.target.value)}
-        placeholder="Enter operating hours"
+        value={formData.equipmentUsage.operatingHours}
+        onChange={handleChange}
+        className="bg-white"
+        sx={{
+          '& .MuiOutlinedInput-root': {
+            '&:hover fieldset': {
+              borderColor: '#FFA500',
+            },
+            '&.Mui-focused fieldset': {
+              borderColor: '#FFA500',
+            },
+          },
+          '& .MuiInputLabel-root.Mui-focused': {
+            color: '#FFA500',
+          },
+        }}
       />
-    </div>
 
-    <div className="mb-4">
-      <label className="block text-gray-700 dark:text-gray-300 mb-2" htmlFor="waterUsage">
-        Average Fuel Consumption per Hour (liters/kWh)
-      </label>
-      <input
+      <TextField
+        fullWidth
+        required
+        label="Fuel Consumption per Hour (L/hr)"
+        name="fuelConsumptionPerHour"
         type="number"
-        id="waterUsage"
-        className="w-full p-2 border border-gray-300 rounded 
-        bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 
-        focus:outline-none focus:ring-1 focus:ring-[#FFA500] 
-        focus:border-[#FFA500] hover:border-[#FFA500]"
-        value={waterUsage}
-        onChange={(e) => setWaterUsage(e.target.value)}
-        placeholder="Enter average fuel consumption"
+        value={formData.equipmentUsage.fuelConsumptionPerHour}
+        onChange={handleChange}
+        className="bg-white"
+        sx={{
+          '& .MuiOutlinedInput-root': {
+            '&:hover fieldset': {
+              borderColor: '#FFA500',
+            },
+            '&.Mui-focused fieldset': {
+              borderColor: '#FFA500',
+            },
+          },
+          '& .MuiInputLabel-root.Mui-focused': {
+            color: '#FFA500',
+          },
+        }}
       />
-    </div>
+    </Box>
+  );
+};
 
-    <div className="mb-4">
-      <label className="block text-gray-700 dark:text-gray-300 mb-2" htmlFor="emissionLevel">
-        Equipment Efficiency Rating (%)
-      </label>
-      <input
-        type="number"
-        id="emissionLevel"
-        className="w-full p-2 border border-gray-300 rounded 
-        bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 
-        focus:outline-none focus:ring-1 focus:ring-[#FFA500] 
-        focus:border-[#FFA500] hover:border-[#FFA500]"
-        value={emissionLevel}
-        onChange={(e) => setEmissionLevel(e.target.value)}
-        placeholder="Enter equipment efficiency"
-        min="0"
-        max="100"
-      />
-    </div>
-  </div>
-);
-
-export default ResourceUsage;
+export default EquipmentData;
