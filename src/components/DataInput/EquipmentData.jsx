@@ -44,8 +44,8 @@ const EquipmentData = ({ formData, setFormData }) => {
           <MenuItem value="Excavator">Excavator</MenuItem>
           <MenuItem value="Loader">Loader</MenuItem>
           <MenuItem value="Drill">Drill</MenuItem>
-          <MenuItem value="Crusher">Crusher</MenuItem>
-          <MenuItem value="Conveyor">Conveyor</MenuItem>
+          <MenuItem value="Crusher" disabled>Crusher (View Only)</MenuItem>
+          <MenuItem value="Conveyor" disabled>Conveyor (View Only)</MenuItem>
         </Select>
       </FormControl>
 
@@ -71,7 +71,7 @@ const EquipmentData = ({ formData, setFormData }) => {
           <MenuItem value="Diesel">Diesel</MenuItem>
           <MenuItem value="Electric">Electric</MenuItem>
           <MenuItem value="Hybrid">Hybrid</MenuItem>
-          <MenuItem value="Natural Gas">Natural Gas</MenuItem>
+          <MenuItem value="Natural Gas" disabled>Natural Gas (View Only)</MenuItem>
         </Select>
       </FormControl>
 

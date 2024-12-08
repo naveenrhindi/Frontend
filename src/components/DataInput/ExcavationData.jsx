@@ -67,8 +67,8 @@ const ExcavationData = ({ formData, setFormData }) => {
         >
           <MenuItem value="Surface Mining">Surface Mining</MenuItem>
           <MenuItem value="Underground Mining">Underground Mining</MenuItem>
-          <MenuItem value="Strip Mining">Strip Mining</MenuItem>
-          <MenuItem value="Mountain Top Removal">Mountain Top Removal</MenuItem>
+          <MenuItem value="Strip Mining" disabled>Strip Mining (View Only)</MenuItem>
+          <MenuItem value="Mountain Top Removal" disabled>Mountain Top Removal (View Only)</MenuItem>
         </Select>
       </FormControl>
 
@@ -94,7 +94,7 @@ const ExcavationData = ({ formData, setFormData }) => {
           <MenuItem value="Diesel">Diesel</MenuItem>
           <MenuItem value="Petrol">Petrol</MenuItem>
           <MenuItem value="Electric">Electric</MenuItem>
-          <MenuItem value="Natural Gas">Natural Gas</MenuItem>
+          <MenuItem value="Natural Gas" disabled>Natural Gas (View Only)</MenuItem>
         </Select>
       </FormControl>
 

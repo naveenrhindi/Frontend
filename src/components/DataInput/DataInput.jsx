@@ -11,6 +11,7 @@ import {
   createTheme,
   ThemeProvider,
   Alert,
+  AlertTitle,
   Snackbar,
 } from '@mui/material';
 import ExcavationData from './ExcavationData';
@@ -18,6 +19,7 @@ import TransportationData from './TransportationData';
 import EquipmentData from './EquipmentData';
 import MethaneEntrapment from './MethaneEntrapment';
 import axios from 'axios';
+import { validateExcavation, validateTransportation, validateEquipment, validateMethane } from '../../utils/validations';
 
 // Custom theme for orange and green colors
 const theme = createTheme({
@@ -35,8 +37,9 @@ const theme = createTheme({
 const DataInput = () => {
   const [activeStep, setActiveStep] = useState(0);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-  
+  const [error, setError] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   // Form Data State
   const [formData, setFormData] = useState({
     excavation: {
@@ -108,11 +111,50 @@ const DataInput = () => {
     setOpenAlert(false);
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setError(null);
+
+    // Validate all sections
+    const excavationValidation = validateExcavation(formData.excavation);
+    const transportationValidation = validateTransportation(formData.transportation);
+    const equipmentValidation = validateEquipment(formData.equipmentUsage);
+    const methaneValidation = validateMethane(formData.methaneEntrapment);
+
+    // Collect all validation errors
+    const validationErrors = {};
+    
+    if (!excavationValidation.isValid) {
+      validationErrors.excavation = excavationValidation.errors;
+    }
+    if (!transportationValidation.isValid) {
+      validationErrors.transportation = transportationValidation.errors;
+    }
+    if (!equipmentValidation.isValid) {
+      validationErrors.equipment = equipmentValidation.errors;
+    }
+    if (!methaneValidation.isValid) {
+      validationErrors.methane = methaneValidation.errors;
+    }
+
+    // Check if there are any validation errors
+    if (Object.keys(validationErrors).length > 0) {
+      setError({
+        message: 'Please correct the following errors:',
+        details: validationErrors
+      });
+      setIsSubmitting(false);
+      return;
+    }
+
     try {
       setLoading(true);
       setError('');
-      
+
+      // Debug log: Initial equipment data
+      console.log('Raw Equipment Data:', formData.equipmentUsage);
+
       const token = localStorage.getItem('token');
       if (!token) {
         setAlertSeverity('error');
@@ -121,12 +163,50 @@ const DataInput = () => {
         return;
       }
 
+      // Create submission data with number conversions for all numeric fields
+      const submissionData = {
+        ...formData,
+        excavation: {
+          ...formData.excavation,
+          coalAmount: parseFloat(formData.excavation.coalAmount) || 0,
+          distance: parseFloat(formData.excavation.distance) || 0
+        },
+        transportation: {
+          ...formData.transportation,
+          coalTransported: parseFloat(formData.transportation.coalTransported) || 0,
+          distancePerTrip: parseFloat(formData.transportation.distancePerTrip) || 0,
+          vehicleCapacity: parseFloat(formData.transportation.vehicleCapacity) || 0,
+          tripsPerDay: parseFloat(formData.transportation.tripsPerDay) || 0
+        },
+        equipmentUsage: {
+          ...formData.equipmentUsage,
+          operatingHours: parseFloat(formData.equipmentUsage.operatingHours) || 0,
+          fuelConsumptionPerHour: parseFloat(formData.equipmentUsage.fuelConsumptionPerHour) || 0
+        },
+        methaneEntrapment: {
+          ...formData.methaneEntrapment,
+          captureRate: parseFloat(formData.methaneEntrapment.captureRate) || 0,
+          dischargeAmount: parseFloat(formData.methaneEntrapment.dischargeAmount) || 0,
+          conversionEfficiency: parseFloat(formData.methaneEntrapment.conversionEfficiency) || 0
+        }
+      };
+
+      // Debug log: Converted data
+      console.log('All Converted Data:', {
+        excavation: submissionData.excavation,
+        transportation: submissionData.transportation,
+        equipmentUsage: submissionData.equipmentUsage,
+        methaneEntrapment: submissionData.methaneEntrapment
+      });
+
       const baseURL = 'http://localhost:5001';
-      
-      // Step 1: Submit emission data
+
+      // Debug log: Full submission data
+      console.log('Full Submission Data:', submissionData);
+
       const submitResponse = await axios.post(
         `${baseURL}/api/emissions/add-emissions`,
-        formData,
+        submissionData,
         {
           headers: {
             'Authorization': token.startsWith('Bearer ') ? token : `Bearer ${token}`,
@@ -135,8 +215,10 @@ const DataInput = () => {
         }
       );
 
+      // Debug log: Submit response
+      console.log('Submit Response:', submitResponse.data);
+
       if (submitResponse.data) {
-        // Step 2: Trigger emission calculations
         const calculationResponse = await axios.get(
           `${baseURL}/api/emissions/calculate-emissions`,
           {
@@ -146,8 +228,10 @@ const DataInput = () => {
           }
         );
 
+        // Debug log: Calculation response
+        console.log('Calculation Response:', calculationResponse.data);
+
         if (calculationResponse.data) {
-          // Step 3: Get the calculated results
           const getCalculationsResponse = await axios.get(
             `${baseURL}/api/emissions/get-emission-calculations`,
             {
@@ -157,23 +241,25 @@ const DataInput = () => {
             }
           );
 
+          // Debug log: Final calculations
+          console.log('Final Calculations:', getCalculationsResponse.data);
+
           setAlertSeverity('success');
           setAlertMessage('Data submitted and calculations completed successfully!');
           setOpenAlert(true);
-          
-          // Emit event with calculation results for visualization
+
           const calculationEvent = new CustomEvent('emissionCalculated', {
             detail: getCalculationsResponse.data
           });
           window.dispatchEvent(calculationEvent);
-          
+
           setTimeout(handleReset, 2000);
         }
       }
     } catch (err) {
       console.error('Submission error:', err);
       setAlertSeverity('error');
-      
+
       if (!localStorage.getItem('token')) {
         setAlertMessage('Please login to submit data');
       } else if (err.response?.status === 400) {
@@ -189,11 +275,12 @@ const DataInput = () => {
       } else {
         setAlertMessage(err.response?.data?.error || 'Error submitting data. Please try again.');
       }
-      
+
       setError(err.response?.data?.error || 'Error submitting emission data');
       setOpenAlert(true);
     } finally {
       setLoading(false);
+      setIsSubmitting(false);
     }
   };
 
@@ -202,6 +289,30 @@ const DataInput = () => {
       return;
     }
     setOpenAlert(false);
+  };
+
+  const ValidationErrors = ({ errors }) => {
+    if (!errors || Object.keys(errors).length === 0) return null;
+    
+    return (
+      <Box sx={{ mt: 2, mb: 2 }}>
+        <Alert severity="error" sx={{ mb: 2 }}>
+          <AlertTitle>Validation Errors</AlertTitle>
+          {Object.entries(errors).map(([section, sectionErrors]) => (
+            <div key={section}>
+              <Typography variant="subtitle2" sx={{ fontWeight: 'bold', mt: 1 }}>
+                {section.charAt(0).toUpperCase() + section.slice(1)}:
+              </Typography>
+              <ul style={{ margin: '4px 0', paddingLeft: '20px' }}>
+                {Object.entries(sectionErrors).map(([field, message]) => (
+                  <li key={field}>{message}</li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </Alert>
+      </Box>
+    );
   };
 
   const steps = [
@@ -247,6 +358,10 @@ const DataInput = () => {
     <ThemeProvider theme={theme}>
       <div className="bg-white p-6 rounded-lg shadow-md mt-8 ml-8">
         <h2 className="text-2xl font-bold mb-4 text-gray-800">Mining Operation Data Input</h2>
+        
+        {/* Show validation errors if any */}
+        {error && error.details && <ValidationErrors errors={error.details} />}
+        
         <Stepper
           activeStep={activeStep}
           orientation="vertical"
@@ -338,9 +453,9 @@ const DataInput = () => {
                           color: 'white',
                         },
                       }}
-                      disabled={loading}
+                      disabled={loading || isSubmitting}
                     >
-                      {index === steps.length - 1 ? (loading ? 'Submitting...' : 'Submit') : 'Continue'}
+                      {index === steps.length - 1 ? (loading || isSubmitting ? 'Submitting...' : 'Submit') : 'Continue'}
                     </Button>
                     <Button
                       variant="text"
