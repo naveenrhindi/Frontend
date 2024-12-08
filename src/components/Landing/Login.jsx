@@ -1,70 +1,29 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { authService } from '../../api/services/authService';
+import React from 'react';
+import { Link } from 'react-router-dom';
 
 const Login = () => {
-  const [formData, setFormData] = useState({
-    email: '',
-    password: ''
-  });
-  const [error, setError] = useState('');
-  const navigate = useNavigate();
-
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError('');
-    
-    try {
-      const response = await authService.login(formData);
-      if (response.token) {
-        localStorage.setItem('token', response.token);
-        navigate('/dashboard');
-      }
-    } catch (err) {
-      setError(err.message || 'Login failed. Please check your credentials.');
-    }
-  };
-
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-sm">
         <h2 className="text-2xl font-bold text-gray-900 text-center mb-6">Login</h2>
-        {error && (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded mb-4">
-            {error}
-          </div>
-        )}
-        <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
+        <form className="flex flex-col gap-4">
           <input
-            type="email"
-            name="email"
-            placeholder="Email"
-            value={formData.email}
-            onChange={handleChange}
+            type="text"
+            placeholder="Username"
             className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
-            required
-          />
+          required/>
           <input
             type="password"
-            name="password"
             placeholder="Password"
-            value={formData.password}
-            onChange={handleChange}
             className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
-            required
-          />
+          required/>
           <button
             type="submit"
-            className="bg-green-500 text-white py-2 rounded-lg hover:bg-green-600 transition"
+            disabled={loading}
+            className={`w-full bg-green-500 text-white py-2 rounded-lg transition
+              ${loading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-green-600'}`}
           >
-            Login
+            {loading ? 'Logging in...' : 'Login'}
           </button>
         </form>
         <div className="mt-4 text-center">

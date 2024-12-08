@@ -1,6 +1,14 @@
 import React from 'react';
 
 const SelectGroup = ({ label, options, onChange }) => {
+  // Function to check if an option should be disabled
+  const isDisabled = (option) => {
+    const enabledOptions = {
+      'Utilization Method': ['Power Generation', 'Ventilation Air Methane']
+    };
+    return enabledOptions[label] ? !enabledOptions[label].includes(option) : false;
+  };
+
   return (
     <div className="mb-4">
       <label className="block text-gray-700 dark:text-gray-300 mb-2">{label}</label>
@@ -16,9 +24,10 @@ const SelectGroup = ({ label, options, onChange }) => {
           <option
             key={index}
             value={option}
+            disabled={isDisabled(option)}
             className="hover:bg-[#FFA500]/10"
           >
-            {option}
+            {option}{isDisabled(option) ? ' (View Only)' : ''}
           </option>
         ))}
       </select>

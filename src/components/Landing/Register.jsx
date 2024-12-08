@@ -1,123 +1,136 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { registerUser } from '../../services/userService';
 
-const Register = ({ onRegister }) => {
+const Register = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    name: '',
     username: '',
+    fullname: '',
     email: '',
     password: '',
     confirmPassword: '',
-    contactNumber: '',
-    address: '',
-    role: '',
+    contact_no: '',
+    location: ''
   });
+  const [error, setError] = useState('');
+
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError('');
+
     if (formData.password !== formData.confirmPassword) {
-      alert('Passwords do not match!');
+      setError('Passwords do not match');
       return;
     }
-    
+
     try {
-      // Call the onRegister function passed from parent
-      await onRegister();
+      // Remove confirmPassword before sending to backend
+      const { confirmPassword, ...registrationData } = formData;
       
-      // After successful registration and authentication, navigate to dashboard
-      navigate('/dashboard', { replace: true });
-    } catch (error) {
-      console.error('Registration error:', error);
-      alert('Registration failed. Please try again.');
+      const response = await registerUser(registrationData);
+      
+      if (response) {
+        navigate('/login');
+      }
+    } catch (err) {
+      setError(err.error || 'Registration failed. Please try again.');
+      console.error('Registration error:', err);
     }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-lg">
+      <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
         <h2 className="text-2xl font-bold text-gray-900 text-center mb-6">Register</h2>
-        <form className="grid gap-4" onSubmit={handleSubmit}>
+        {error && (
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+            <span className="block sm:inline">{error}</span>
+          </div>
+        )}
+        <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
           <input
             type="text"
-            placeholder="Full Name"
-            className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
-            required
-            value={formData.name}
-            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-          />
-          <input
-            type="text"
+            name="username"
             placeholder="Username"
-            className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
-            required
             value={formData.username}
-            onChange={(e) => setFormData({ ...formData, username: e.target.value })}
-          />
-          <input
-            type="password"
-            placeholder="Password"
+            onChange={handleChange}
             className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
             required
-            value={formData.password}
-            onChange={(e) => setFormData({ ...formData, password: e.target.value })}
           />
           <input
-            type="password"
-            placeholder="Confirm Password"
+            type="text"
+            name="fullname"
+            placeholder="Full Name"
+            value={formData.fullname}
+            onChange={handleChange}
             className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
             required
-            value={formData.confirmPassword}
-            onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
           />
           <input
             type="email"
+            name="email"
             placeholder="Email"
-            className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
-            required
             value={formData.email}
-            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+            onChange={handleChange}
+            className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
+            required
           />
           <input
             type="text"
+            name="contact_no"
             placeholder="Contact Number"
+            value={formData.contact_no}
+            onChange={handleChange}
             className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
             required
-            value={formData.contactNumber}
-            onChange={(e) => setFormData({ ...formData, contactNumber: e.target.value })}
           />
           <input
             type="text"
-            placeholder="Address"
+            name="location"
+            placeholder="Location"
+            value={formData.location}
+            onChange={handleChange}
             className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
             required
-            value={formData.address}
-            onChange={(e) => setFormData({ ...formData, address: e.target.value })}
           />
-          <select
+          <input
+            type="password"
+            name="password"
+            placeholder="Password"
+            value={formData.password}
+            onChange={handleChange}
             className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
             required
-            value={formData.role}
-            onChange={(e) => setFormData({ ...formData, role: e.target.value })}
-          >
-            <option value="">Select Role</option>
-            <option value="admin">Admin</option>
-            <option value="user">User</option>
-          </select>
+          />
+          <input
+            type="password"
+            name="confirmPassword"
+            placeholder="Confirm Password"
+            value={formData.confirmPassword}
+            onChange={handleChange}
+            className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
+            required
+          />
           <button
             type="submit"
-            className="bg-green-500 text-white py-2 rounded-lg hover:bg-green-600 transition-colors"
+            className="bg-green-500 text-white py-2 rounded-lg hover:bg-green-600 transition"
           >
             Register
           </button>
         </form>
-        <p className="text-center mt-4">
-          Already have an account?{' '}
-          <Link to="/login" className="text-green-500 hover:text-green-600">
-            Login here
+        <div className="mt-4 text-center">
+          <Link to="/login" className="text-green-500 hover:underline">
+            Already have an account? Login
           </Link>
-        </p>
+        </div>
       </div>
     </div>
   );

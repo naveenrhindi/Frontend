@@ -1,84 +1,176 @@
 import React from 'react';
-import SelectGroup from './SelectGroup';
+import {
+  TextField,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Box,
+} from '@mui/material';
 
-const ProductionData = ({ coalProduction, setCoalProduction }) => (
-  <div className="bg-white dark:bg-gray-800 p-4 rounded-lg">
-    <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-2">Transportation Data</h3>
-    
-    <div className="mb-4">
-      <label className="block text-gray-700 dark:text-gray-300 mb-2" htmlFor="coalProduction">
-        Amount of Coal Transported (tons)
-      </label>
-      <input
+const TransportationData = ({ formData, setFormData }) => {
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      transportation: {
+        ...prev.transportation,
+        [name]: value
+      }
+    }));
+  };
+
+  return (
+    <Box className="space-y-4">
+      <TextField
+        fullWidth
+        required
+        label="Coal Transported (tonnes)"
+        name="coalTransported"
         type="number"
-        id="coalProduction"
-        className="w-full p-2 border border-gray-300 rounded 
-        bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 
-        focus:outline-none focus:ring-1 focus:ring-[#FFA500] 
-        focus:border-[#FFA500] hover:border-[#FFA500]"
-        value={coalProduction}
-        onChange={(e) => setCoalProduction(e.target.value)}
-        placeholder="Enter amount of coal transported"
+        value={formData.transportation.coalTransported}
+        onChange={handleChange}
+        className="bg-white"
+        sx={{
+          '& .MuiOutlinedInput-root': {
+            '&:hover fieldset': {
+              borderColor: '#FFA500',
+            },
+            '&.Mui-focused fieldset': {
+              borderColor: '#FFA500',
+            },
+          },
+          '& .MuiInputLabel-root.Mui-focused': {
+            color: '#FFA500',
+          },
+        }}
       />
-    </div>
 
-    <SelectGroup
-      label="Mode of Transport"
-      options={['Haul Trucks', 'Conveyor Systems', 'Mine Cars', 'Shuttle Cars', 'Rail Transport']}
-      onChange={() => {}}
-    />
+      <FormControl fullWidth required>
+        <InputLabel id="mode-label" sx={{ '&.Mui-focused': { color: '#FFA500' } }}>
+          Transportation Mode
+        </InputLabel>
+        <Select
+          labelId="mode-label"
+          name="mode"
+          value={formData.transportation.mode}
+          label="Transportation Mode"
+          onChange={handleChange}
+          sx={{
+            '&:hover .MuiOutlinedInput-notchedOutline': {
+              borderColor: '#FFA500',
+            },
+            '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+              borderColor: '#FFA500',
+            },
+          }}
+        >
+          <MenuItem value="Truck">Truck</MenuItem>
+          <MenuItem value="Rail">Rail</MenuItem>
+          <MenuItem value="Conveyor" disabled>Conveyor (View Only)</MenuItem>
+          <MenuItem value="Ship" disabled>Ship (View Only)</MenuItem>
+        </Select>
+      </FormControl>
 
-    <SelectGroup
-      label="Transport Fuel Type"
-      options={['Diesel', 'Electric', 'Hybrid']}
-      onChange={() => {}}
-    />
+      <FormControl fullWidth required>
+        <InputLabel id="fuel-type-label" sx={{ '&.Mui-focused': { color: '#FFA500' } }}>
+          Fuel Type
+        </InputLabel>
+        <Select
+          labelId="fuel-type-label"
+          name="fuelType"
+          value={formData.transportation.fuelType}
+          label="Fuel Type"
+          onChange={handleChange}
+          sx={{
+            '&:hover .MuiOutlinedInput-notchedOutline': {
+              borderColor: '#FFA500',
+            },
+            '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+              borderColor: '#FFA500',
+            },
+          }}
+        >
+          <MenuItem value="Diesel">Diesel</MenuItem>
+          <MenuItem value="Electric">Electric</MenuItem>
+          <MenuItem value="Hybrid">Hybrid</MenuItem>
+          <MenuItem value="Natural Gas" disabled>Natural Gas (View Only)</MenuItem>
+        </Select>
+      </FormControl>
 
-    <div className="mb-4">
-      <label className="block text-gray-700 dark:text-gray-300 mb-2" htmlFor="distance">
-        Distance Covered per Trip (meters)
-      </label>
-      <input
+      <TextField
+        fullWidth
+        required
+        label="Distance per Trip (km)"
+        name="distancePerTrip"
         type="number"
-        id="distance"
-        className="w-full p-2 border border-gray-300 rounded 
-        bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 
-        focus:outline-none focus:ring-1 focus:ring-[#FFA500] 
-        focus:border-[#FFA500] hover:border-[#FFA500]"
-        placeholder="Enter distance covered per trip"
+        value={formData.transportation.distancePerTrip}
+        onChange={handleChange}
+        className="bg-white"
+        sx={{
+          '& .MuiOutlinedInput-root': {
+            '&:hover fieldset': {
+              borderColor: '#FFA500',
+            },
+            '&.Mui-focused fieldset': {
+              borderColor: '#FFA500',
+            },
+          },
+          '& .MuiInputLabel-root.Mui-focused': {
+            color: '#FFA500',
+          },
+        }}
       />
-    </div>
 
-    <div className="mb-4">
-      <label className="block text-gray-700 dark:text-gray-300 mb-2" htmlFor="capacity">
-        Vehicle/System Capacity (tons)
-      </label>
-      <input
+      <TextField
+        fullWidth
+        required
+        label="Vehicle Capacity (tonnes)"
+        name="vehicleCapacity"
         type="number"
-        id="capacity"
-        className="w-full p-2 border border-gray-300 rounded 
-        bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 
-        focus:outline-none focus:ring-1 focus:ring-[#FFA500] 
-        focus:border-[#FFA500] hover:border-[#FFA500]"
-        placeholder="Enter transport capacity"
+        value={formData.transportation.vehicleCapacity}
+        onChange={handleChange}
+        className="bg-white"
+        sx={{
+          '& .MuiOutlinedInput-root': {
+            '&:hover fieldset': {
+              borderColor: '#FFA500',
+            },
+            '&.Mui-focused fieldset': {
+              borderColor: '#FFA500',
+            },
+          },
+          '& .MuiInputLabel-root.Mui-focused': {
+            color: '#FFA500',
+          },
+        }}
       />
-    </div>
 
-    <div className="mb-4">
-      <label className="block text-gray-700 dark:text-gray-300 mb-2" htmlFor="trips">
-        Number of Trips per Day
-      </label>
-      <input
+      <TextField
+        fullWidth
+        required
+        label="Trips per Day"
+        name="tripsPerDay"
         type="number"
-        id="trips"
-        className="w-full p-2 border border-gray-300 rounded 
-        bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 
-        focus:outline-none focus:ring-1 focus:ring-[#FFA500] 
-        focus:border-[#FFA500] hover:border-[#FFA500]"
-        placeholder="Enter number of trips per day"
+        value={formData.transportation.tripsPerDay}
+        onChange={handleChange}
+        className="bg-white"
+        sx={{
+          '& .MuiOutlinedInput-root': {
+            '&:hover fieldset': {
+              borderColor: '#FFA500',
+            },
+            '&.Mui-focused fieldset': {
+              borderColor: '#FFA500',
+            },
+          },
+          '& .MuiInputLabel-root.Mui-focused': {
+            color: '#FFA500',
+          },
+        }}
       />
-    </div>
-  </div>
-);
+    </Box>
+  );
+};
 
-export default ProductionData;
+export default TransportationData;

@@ -32,18 +32,23 @@ const CarbonSinks = () => {
   const [data, setData] = useState({
     afforestation: {
       area: 0,
-      plantingRate: 0,
+      treePlantingRate: 0,
       treeType: 'broadleaf',
+      location: '',
       estimatedCarbonSeq: 0
     },
-    soilCarbon: {
+    biodiversityConservation: {
       area: 0,
-      managementType: 'organic',
+      habitatType: 'wetland',
+      speciesCount: 0,
+      location: '',
       estimatedCarbonSeq: 0
     },
-    grassland: {
-      area: 0,
-      grassType: 'native',
+    greenTechnology: {
+      technologyType: 'solar',
+      capacity: 0,
+      efficiency: 0,
+      location: '',
       estimatedCarbonSeq: 0
     }
   });
@@ -61,9 +66,9 @@ const CarbonSinks = () => {
     setActiveStep(0);
     setShowCharts(false);
     setData({
-      afforestation: { area: 0, plantingRate: 0, treeType: 'broadleaf', estimatedCarbonSeq: 0 },
-      soilCarbon: { area: 0, managementType: 'organic', estimatedCarbonSeq: 0 },
-      grassland: { area: 0, grassType: 'native', estimatedCarbonSeq: 0 }
+      afforestation: { area: 0, treePlantingRate: 0, treeType: 'broadleaf', location: '', estimatedCarbonSeq: 0 },
+      biodiversityConservation: { area: 0, habitatType: 'wetland', speciesCount: 0, location: '', estimatedCarbonSeq: 0 },
+      greenTechnology: { technologyType: 'solar', capacity: 0, efficiency: 0, location: '', estimatedCarbonSeq: 0 }
     });
   };
 
@@ -72,13 +77,12 @@ const CarbonSinks = () => {
     switch(type) {
       case 'afforestation':
         seqRate = values.treeType === 'broadleaf' ? 2.5 : values.treeType === 'evergreen' ? 2.0 : 2.2;
-        return (values.area * values.plantingRate * seqRate) / 1000; // Convert to tCO2/year
-      case 'soilCarbon':
-        seqRate = values.managementType === 'organic' ? 3.0 : 2.0;
+        return (values.area * values.treePlantingRate * seqRate) / 1000; // Convert to tCO2/year
+      case 'biodiversityConservation':
+        seqRate = values.habitatType === 'wetland' ? 4.0 : values.habitatType === 'forest' ? 3.5 : 3.0;
         return (values.area * seqRate) / 1000;
-      case 'grassland':
-        seqRate = values.grassType === 'native' ? 4.0 : values.grassType === 'perennial' ? 3.5 : 3.0;
-        return (values.area * seqRate) / 1000;
+      case 'greenTechnology':
+        return (values.capacity * values.efficiency) / 100; // Simplified calculation for green tech
       default:
         return 0;
     }
@@ -124,7 +128,7 @@ const CarbonSinks = () => {
       )
     },
     {
-      label: 'Soil Carbon',
+      label: 'Biodiversity Conservation',
       icon: FaLeaf,
       content: (
         <motion.div
@@ -138,20 +142,20 @@ const CarbonSinks = () => {
               <FaLeaf className="w-6 h-6 text-orange-600" />
             </div>
             <div>
-              <h3 className="text-xl font-semibold text-gray-900">Soil Carbon</h3>
-              <p className="text-gray-600">Manage soil carbon sequestration</p>
+              <h3 className="text-xl font-semibold text-gray-900">Biodiversity Conservation</h3>
+              <p className="text-gray-600">Manage biodiversity conservation efforts</p>
             </div>
           </div>
           <CarbonSinksInput
-            type="soilCarbon"
-            data={data.soilCarbon}
-            onUpdate={(values) => handleDataUpdate('soilCarbon', values)}
+            type="biodiversityConservation"
+            data={data.biodiversityConservation}
+            onUpdate={(values) => handleDataUpdate('biodiversityConservation', values)}
           />
         </motion.div>
       )
     },
     {
-      label: 'Grassland',
+      label: 'Green Technology',
       icon: FaMountain,
       content: (
         <motion.div
@@ -165,14 +169,14 @@ const CarbonSinks = () => {
               <FaMountain className="w-6 h-6 text-yellow-600" />
             </div>
             <div>
-              <h3 className="text-xl font-semibold text-gray-900">Grassland</h3>
-              <p className="text-gray-600">Monitor grassland restoration</p>
+              <h3 className="text-xl font-semibold text-gray-900">Green Technology</h3>
+              <p className="text-gray-600">Monitor green technology adoption</p>
             </div>
           </div>
           <CarbonSinksInput
-            type="grassland"
-            data={data.grassland}
-            onUpdate={(values) => handleDataUpdate('grassland', values)}
+            type="greenTechnology"
+            data={data.greenTechnology}
+            onUpdate={(values) => handleDataUpdate('greenTechnology', values)}
           />
         </motion.div>
       )
@@ -213,8 +217,8 @@ const CarbonSinks = () => {
                   <FaLeaf className="w-6 h-6 text-orange-600" />
                 </div>
                 <div>
-                  <p className="text-sm text-gray-600">Soil Carbon</p>
-                  <h4 className="text-xl font-semibold text-gray-900">{data.soilCarbon.estimatedCarbonSeq.toFixed(2)} tCO2/year</h4>
+                  <p className="text-sm text-gray-600">Biodiversity Conservation</p>
+                  <h4 className="text-xl font-semibold text-gray-900">{data.biodiversityConservation.estimatedCarbonSeq.toFixed(2)} tCO2/year</h4>
                 </div>
               </div>
             </motion.div>
@@ -228,8 +232,8 @@ const CarbonSinks = () => {
                   <FaMountain className="w-6 h-6 text-yellow-600" />
                 </div>
                 <div>
-                  <p className="text-sm text-gray-600">Grassland</p>
-                  <h4 className="text-xl font-semibold text-gray-900">{data.grassland.estimatedCarbonSeq.toFixed(2)} tCO2/year</h4>
+                  <p className="text-sm text-gray-600">Green Technology</p>
+                  <h4 className="text-xl font-semibold text-gray-900">{data.greenTechnology.estimatedCarbonSeq.toFixed(2)} tCO2/year</h4>
                 </div>
               </div>
             </motion.div>

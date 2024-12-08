@@ -1,5 +1,5 @@
+
 # Coal Mine Owner Dashboard
-=========================
 
 This project is a comprehensive web application designed to help coal mine owners efficiently manage and visualize various aspects of their operations. The dashboard provides an intuitive interface for data input, visualization, and suggestions to improve overall efficiency and sustainability.
 
@@ -79,3 +79,7 @@ src
 ├── Routes
 │   └── routes.js
 └── App.js
+
+
+# Front
+ 1fb7345c408ff5feea0d2da45e7e8124bca45d69
