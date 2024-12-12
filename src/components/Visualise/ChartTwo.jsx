@@ -1,6 +1,17 @@
 import React, { useState } from 'react';
 import ReactApexChart from 'react-apexcharts';
 
+const customBarChartData = [
+  {
+    name: 'Coal Production',
+    data: [28, 48, 40, 19, 86, 27, 30, 50, 60, 40, 70, 90],
+  },
+  {
+    name: 'Fuel Consumption',
+    data: [65, 59, 80, 81, 56, 55, 40, 60, 70, 50, 65, 80],
+  },
+];
+
 const options = {
   colors: ['#006400', '#90EE90'], // Dark Green and Light Green (PaleGreen)
   chart: {
@@ -66,18 +77,7 @@ const options = {
 
 const ChartTwo = () => {
   const [state] = useState({
-    series: [
-      {
-        name: 'Carbon Emissions',
-        data: [30, 40, 35, 50, 49, 60, 70, 91, 80, 70, 60, 50],
-        color: '#006400', // Dark Green
-      },
-      {
-        name: 'Environmental Standards Limit',
-        data: Array(12).fill(50), // Array to ensure consistency
-        color: '#90EE90', // Light Green (PaleGreen)
-      },
-    ],
+    series: customBarChartData,
   });
 
   return (

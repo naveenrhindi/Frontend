@@ -6,9 +6,19 @@ import {
   Select,
   MenuItem,
   Box,
+  Checkbox,
+  ListItemText,
 } from '@mui/material';
 
 const ExcavationData = ({ formData, setFormData }) => {
+  const equipmentList = [
+    { id: 'dragline', label: 'Dragline', available: true },
+    { id: 'shovel', label: 'Power Shovel', available: true },
+    { id: 'excavator', label: 'Hydraulic Excavator', available: true },
+    { id: 'drill', label: 'Drill Machine', available: false },
+    { id: 'crusher', label: 'Rock Crusher', available: false },
+  ];
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -46,7 +56,7 @@ const ExcavationData = ({ formData, setFormData }) => {
         }}
       />
 
-      <FormControl fullWidth required>
+      <FormControl fullWidth >
         <InputLabel id="method-label" sx={{ '&.Mui-focused': { color: '#FFA500' } }}>
           Excavation Method
         </InputLabel>
@@ -100,7 +110,7 @@ const ExcavationData = ({ formData, setFormData }) => {
 
       <TextField
         fullWidth
-        required
+       
         label="Distance (km)"
         name="distance"
         type="number"
@@ -122,15 +132,14 @@ const ExcavationData = ({ formData, setFormData }) => {
         }}
       />
 
-      <FormControl fullWidth required>
+      <FormControl fullWidth>
         <InputLabel id="equipment-used-label" sx={{ '&.Mui-focused': { color: '#FFA500' } }}>
           Equipment Used
         </InputLabel>
         <Select
           labelId="equipment-used-label"
-          name="equipmentUsed"
-          value={formData.excavation.equipmentUsed}
-          label="Equipment Used"
+          name="equipmentType"
+          value={formData.excavation?.equipmentType || ''}
           onChange={handleChange}
           sx={{
             '&:hover .MuiOutlinedInput-notchedOutline': {
@@ -141,12 +150,61 @@ const ExcavationData = ({ formData, setFormData }) => {
             },
           }}
         >
-          <MenuItem value="Excavator">Excavator</MenuItem>
-          <MenuItem value="Dragline">Dragline</MenuItem>
-          <MenuItem value="Continuous Miner">Continuous Miner</MenuItem>
-          <MenuItem value="Longwall Miner">Longwall Miner</MenuItem>
+          {equipmentList.map((equipment) => (
+            <MenuItem key={equipment.id} value={equipment.id} disabled={!equipment.available}>
+              {equipment.label}
+            </MenuItem>
+          ))}
         </Select>
       </FormControl>
+
+      <TextField
+        fullWidth
+        required
+        label="Operating Hours"
+        name="operatingHours"
+        type="number"
+        value={formData.excavation.operatingHours}
+        onChange={handleChange}
+        className="bg-white"
+        sx={{
+          '& .MuiOutlinedInput-root': {
+            '&:hover fieldset': {
+              borderColor: '#FFA500',
+            },
+            '&.Mui-focused fieldset': {
+              borderColor: '#FFA500',
+            },
+          },
+          '& .MuiInputLabel-root.Mui-focused': {
+            color: '#FFA500',
+          },
+        }}
+      />
+
+      <TextField
+        fullWidth
+        required
+        label="Fuel Consumption per Hour (L/hr)"
+        name="fuelConsumptionPerHour"
+        type="number"
+        value={formData.excavation.fuelConsumptionPerHour}
+        onChange={handleChange}
+        className="bg-white"
+        sx={{
+          '& .MuiOutlinedInput-root': {
+            '&:hover fieldset': {
+              borderColor: '#FFA500',
+            },
+            '&.Mui-focused fieldset': {
+              borderColor: '#FFA500',
+            },
+          },
+          '& .MuiInputLabel-root.Mui-focused': {
+            color: '#FFA500',
+          },
+        }}
+      />
     </Box>
   );
 };

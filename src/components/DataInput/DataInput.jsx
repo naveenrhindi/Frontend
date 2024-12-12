@@ -13,6 +13,7 @@ import {
   Alert,
   AlertTitle,
   Snackbar,
+  TextField
 } from '@mui/material';
 import ExcavationData from './ExcavationData';
 import TransportationData from './TransportationData';
@@ -20,6 +21,10 @@ import EquipmentData from './EquipmentData';
 import MethaneEntrapment from './MethaneEntrapment';
 import axios from 'axios';
 import { validateExcavation, validateTransportation, validateEquipment, validateMethane } from '../../utils/validations';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { useNavigate } from 'react-router-dom';
 
 // Custom theme for orange and green colors
 const theme = createTheme({
@@ -35,6 +40,7 @@ const theme = createTheme({
 });
 
 const DataInput = () => {
+  const navigate = useNavigate();
   const [activeStep, setActiveStep] = useState(0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -68,7 +74,8 @@ const DataInput = () => {
       utilizationMethod: '',
       dischargeAmount: '',
       conversionEfficiency: ''
-    }
+    },
+    emissionDate: new Date()
   });
 
   const [openAlert, setOpenAlert] = useState(false);
@@ -106,7 +113,8 @@ const DataInput = () => {
         utilizationMethod: '',
         dischargeAmount: '',
         conversionEfficiency: ''
-      }
+      },
+      emissionDate: new Date()
     });
     setOpenAlert(false);
   };
@@ -253,7 +261,9 @@ const DataInput = () => {
           });
           window.dispatchEvent(calculationEvent);
 
-          setTimeout(handleReset, 2000);
+          setTimeout(() => {
+            navigate('/dashboard', { state: { newEmissionData: formData } });
+          }, 2000);
         }
       }
     } catch (err) {
@@ -362,6 +372,25 @@ const DataInput = () => {
         {/* Show validation errors if any */}
         {error && error.details && <ValidationErrors errors={error.details} />}
         
+        <Box sx={{ mb: 4 }}>
+          <LocalizationProvider dateAdapter={AdapterDateFns}>
+            <DatePicker
+              label="Emission Date"
+              value={formData.emissionDate}
+              onChange={(newValue) => {
+                setFormData(prev => ({
+                  ...prev,
+                  emissionDate: newValue
+                }));
+              }}
+              renderInput={(params) => <TextField {...params} fullWidth />}
+              maxDate={new Date()} // Restrict to today or earlier
+              inputFormat="dd/MM/yyyy" // Set the desired format
+              sx={{ width: '100%' }}
+            />
+          </LocalizationProvider>
+        </Box>
+
         <Stepper
           activeStep={activeStep}
           orientation="vertical"

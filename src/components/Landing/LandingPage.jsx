@@ -91,6 +91,7 @@ const LandingPage = () => {
             >
               Get Started
             </Link>
+            <Link to="/login" className="text-green-500 hover:underline mt-4"></Link>
           </div>
         </section>
 

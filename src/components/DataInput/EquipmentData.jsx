@@ -9,6 +9,14 @@ import {
 } from '@mui/material';
 
 const EquipmentData = ({ formData, setFormData }) => {
+  const equipmentList = [
+    { id: 'excavator', label: 'Excavator', available: true },
+    { id: 'loader', label: 'Loader', available: true },
+    { id: 'drill', label: 'Drill', available: true },
+    { id: 'crusher', label: 'Crusher', available: false },
+    { id: 'conveyor', label: 'Conveyor', available: false },
+  ];
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -22,14 +30,14 @@ const EquipmentData = ({ formData, setFormData }) => {
 
   return (
     <Box className="space-y-4">
-      <FormControl fullWidth required>
-        <InputLabel id="type-label" sx={{ '&.Mui-focused': { color: '#FFA500' } }}>
+      <FormControl fullWidth>
+        <InputLabel id="equipment-type-label" sx={{ '&.Mui-focused': { color: '#FFA500' } }}>
           Equipment Type
         </InputLabel>
         <Select
-          labelId="type-label"
+          labelId="equipment-type-label"
           name="type"
-          value={formData.equipmentUsage.type}
+          value={formData.equipmentUsage?.type || ''}
           label="Equipment Type"
           onChange={handleChange}
           sx={{
@@ -41,22 +49,22 @@ const EquipmentData = ({ formData, setFormData }) => {
             },
           }}
         >
-          <MenuItem value="Excavator">Excavator</MenuItem>
-          <MenuItem value="Loader">Loader</MenuItem>
-          <MenuItem value="Drill">Drill</MenuItem>
-          <MenuItem value="Crusher" disabled>Crusher (View Only)</MenuItem>
-          <MenuItem value="Conveyor" disabled>Conveyor (View Only)</MenuItem>
+          {equipmentList.map((equipment) => (
+            <MenuItem key={equipment.id} value={equipment.id} disabled={!equipment.available}>
+              {equipment.label}
+            </MenuItem>
+          ))}
         </Select>
       </FormControl>
 
-      <FormControl fullWidth required>
+      <FormControl fullWidth>
         <InputLabel id="fuel-type-label" sx={{ '&.Mui-focused': { color: '#FFA500' } }}>
           Fuel Type
         </InputLabel>
         <Select
           labelId="fuel-type-label"
           name="fuelType"
-          value={formData.equipmentUsage.fuelType}
+          value={formData.equipmentUsage?.fuelType || ''}
           label="Fuel Type"
           onChange={handleChange}
           sx={{
@@ -69,19 +77,18 @@ const EquipmentData = ({ formData, setFormData }) => {
           }}
         >
           <MenuItem value="Diesel">Diesel</MenuItem>
+          <MenuItem value="Petrol">Petrol</MenuItem>
           <MenuItem value="Electric">Electric</MenuItem>
-          <MenuItem value="Hybrid">Hybrid</MenuItem>
           <MenuItem value="Natural Gas" disabled>Natural Gas (View Only)</MenuItem>
         </Select>
       </FormControl>
 
       <TextField
         fullWidth
-        required
         label="Operating Hours"
         name="operatingHours"
         type="number"
-        value={formData.equipmentUsage.operatingHours}
+        value={formData.equipmentUsage?.operatingHours || ''}
         onChange={handleChange}
         className="bg-white"
         sx={{
@@ -101,11 +108,10 @@ const EquipmentData = ({ formData, setFormData }) => {
 
       <TextField
         fullWidth
-        required
         label="Fuel Consumption per Hour (L/hr)"
         name="fuelConsumptionPerHour"
         type="number"
-        value={formData.equipmentUsage.fuelConsumptionPerHour}
+        value={formData.equipmentUsage?.fuelConsumptionPerHour || ''}
         onChange={handleChange}
         className="bg-white"
         sx={{

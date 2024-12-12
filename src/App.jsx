@@ -1,15 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { isAuthenticated, getCurrentUser } from './services/userService';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 // Landing components
 import Login from './components/Landing/Login';
 import Register from './components/Landing/Register';
+import LandingPage from './components/Landing/LandingPage';
 
 // Dashboard components
 import Header from './components/Header';
 import Visualise from './components/Visualise/Visualise';
 import DataInput from './components/DataInput/DataInput';
+import Dashboard from './components/Dashboard/Dashboard';
 import CarbonSinks from './components/CarbonSinks/CarbonSinks';
 import Suggestions from './components/Suggestions/Suggestion';
 import Reports from './components/Export/ExportOptions';
@@ -57,16 +61,29 @@ const DashboardLayout = ({ children }) => {
 function App() {
   return (
     <Router>
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
       <Routes>
         {/* Public routes */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/" element={<LandingPage />} /> {/* Add the landing page route */}
         
         {/* Protected dashboard routes */}
         <Route path="/dashboard" element={
           <ProtectedRoute>
             <DashboardLayout>
-              <Visualise />
+              <Dashboard />
             </DashboardLayout>
           </ProtectedRoute>
         } />

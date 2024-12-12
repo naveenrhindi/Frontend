@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
   Stepper,
@@ -9,26 +10,31 @@ import {
   Box,
   createTheme,
   ThemeProvider,
+  CircularProgress,
 } from '@mui/material';
 import { FaTree, FaLeaf, FaMountain } from 'react-icons/fa';
 import CarbonSinksInput from './CarbonSinksInput';
 import CarbonSinksVisualisation from './CarbonSinksVisualisation';
+import { carbonSinkService } from '../../api/services/carbonSinkService';
+import { toast } from 'react-toastify';
 
 const theme = createTheme({
   palette: {
     primary: {
-      main: '#FFA500', // Orange
-      light: '#FFD9B3', // Light orange
+      main: '#FFA500',
+      light: '#FFD9B3',
     },
     secondary: {
-      main: '#32CD32', // Green
+      main: '#32CD32',
     },
   },
 });
 
 const CarbonSinks = () => {
+  const navigate = useNavigate();
   const [activeStep, setActiveStep] = useState(0);
   const [showCharts, setShowCharts] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [data, setData] = useState({
     afforestation: {
       area: 0,
@@ -53,14 +59,62 @@ const CarbonSinks = () => {
     }
   });
 
+  const validateData = () => {
+    const types = ['afforestation', 'biodiversityConservation', 'greenTechnology'];
+    for (const type of types) {
+      const sinkData = data[type];
+      if (!sinkData.location) {
+        toast.error(`Please enter location for ${type}`);
+        return false;
+      }
+      if (type === 'afforestation') {
+        if (!sinkData.area || !sinkData.treePlantingRate) {
+          toast.error('Please fill in all afforestation fields');
+          return false;
+        }
+      } else if (type === 'biodiversityConservation') {
+        if (!sinkData.area || !sinkData.speciesCount) {
+          toast.error('Please fill in all biodiversity conservation fields');
+          return false;
+        }
+      } else if (type === 'greenTechnology') {
+        if (!sinkData.capacity || !sinkData.efficiency) {
+          toast.error('Please fill in all green technology fields');
+          return false;
+        }
+      }
+    }
+    return true;
+  };
+
+  const handleSubmit = async () => {
+    if (!validateData()) return;
+    
+    setIsSubmitting(true);
+    try {
+      const submissions = await Promise.all([
+        carbonSinkService.addCarbonSink({ type: 'afforestation', ...data.afforestation }),
+        carbonSinkService.addCarbonSink({ type: 'biodiversityConservation', ...data.biodiversityConservation }),
+        carbonSinkService.addCarbonSink({ type: 'greenTechnology', ...data.greenTechnology })
+      ]);
+
+      toast.success('Carbon sink data submitted successfully!');
+      navigate('/progress');
+    } catch (error) {
+      toast.error(error.message || 'Failed to submit carbon sink data');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   const handleNext = () => {
     if (activeStep === steps.length - 1) {
-      setShowCharts(true);
+      handleSubmit();
     } else {
       setActiveStep((prev) => prev + 1);
     }
   };
-  
+
   const handleBack = () => setActiveStep((prev) => prev - 1);
   const handleReset = () => {
     setActiveStep(0);
@@ -77,12 +131,12 @@ const CarbonSinks = () => {
     switch(type) {
       case 'afforestation':
         seqRate = values.treeType === 'broadleaf' ? 2.5 : values.treeType === 'evergreen' ? 2.0 : 2.2;
-        return (values.area * values.treePlantingRate * seqRate) / 1000; // Convert to tCO2/year
+        return (values.area * values.treePlantingRate * seqRate) / 1000;
       case 'biodiversityConservation':
         seqRate = values.habitatType === 'wetland' ? 4.0 : values.habitatType === 'forest' ? 3.5 : 3.0;
         return (values.area * seqRate) / 1000;
       case 'greenTechnology':
-        return (values.capacity * values.efficiency) / 100; // Simplified calculation for green tech
+        return (values.capacity * values.efficiency) / 100;
       default:
         return 0;
     }
@@ -103,6 +157,7 @@ const CarbonSinks = () => {
     {
       label: 'Afforestation',
       icon: FaTree,
+      type: 'afforestation',
       content: (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -130,6 +185,7 @@ const CarbonSinks = () => {
     {
       label: 'Biodiversity Conservation',
       icon: FaLeaf,
+      type: 'biodiversityConservation',
       content: (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -157,6 +213,7 @@ const CarbonSinks = () => {
     {
       label: 'Green Technology',
       icon: FaMountain,
+      type: 'greenTechnology',
       content: (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -186,60 +243,59 @@ const CarbonSinks = () => {
   return (
     <ThemeProvider theme={theme}>
       <div className="container mx-auto p-6">
+        {/* Header Stats Section */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <motion.div
+            whileHover={{ scale: 1.02 }}
+            className="bg-gradient-to-br from-green-50 to-green-100 p-6 rounded-xl shadow-sm"
+          >
+            <div className="flex items-center space-x-4">
+              <div className="w-12 h-12 rounded-lg bg-green-500 bg-opacity-20 flex items-center justify-center">
+                <FaTree className="w-6 h-6 text-green-600" />
+              </div>
+              <div>
+                <p className="text-sm text-gray-600">Afforestation</p>
+                <h4 className="text-xl font-semibold text-gray-900">{data.afforestation.estimatedCarbonSeq.toFixed(2)} tCO2/year</h4>
+              </div>
+            </div>
+          </motion.div>
+
+          <motion.div
+            whileHover={{ scale: 1.02 }}
+            className="bg-gradient-to-br from-orange-50 to-orange-100 p-6 rounded-xl shadow-sm"
+          >
+            <div className="flex items-center space-x-4">
+              <div className="w-12 h-12 rounded-lg bg-orange-500 bg-opacity-20 flex items-center justify-center">
+                <FaLeaf className="w-6 h-6 text-orange-600" />
+              </div>
+              <div>
+                <p className="text-sm text-gray-600">Biodiversity Conservation</p>
+                <h4 className="text-xl font-semibold text-gray-900">{data.biodiversityConservation.estimatedCarbonSeq.toFixed(2)} tCO2/year</h4>
+              </div>
+            </div>
+          </motion.div>
+
+          <motion.div
+            whileHover={{ scale: 1.02 }}
+            className="bg-gradient-to-br from-yellow-50 to-yellow-100 p-6 rounded-xl shadow-sm"
+          >
+            <div className="flex items-center space-x-4">
+              <div className="w-12 h-12 rounded-lg bg-yellow-500 bg-opacity-20 flex items-center justify-center">
+                <FaMountain className="w-6 h-6 text-yellow-600" />
+              </div>
+              <div>
+                <p className="text-sm text-gray-600">Green Technology</p>
+                <h4 className="text-xl font-semibold text-gray-900">{data.greenTechnology.estimatedCarbonSeq.toFixed(2)} tCO2/year</h4>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="bg-white rounded-xl shadow-lg p-6"
         >
-          {/* Stats Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <motion.div
-              whileHover={{ scale: 1.02 }}
-              className="bg-gradient-to-br from-green-50 to-green-100 p-6 rounded-xl shadow-sm"
-            >
-              <div className="flex items-center space-x-4">
-                <div className="w-12 h-12 rounded-lg bg-green-500 bg-opacity-20 flex items-center justify-center">
-                  <FaTree className="w-6 h-6 text-green-600" />
-                </div>
-                <div>
-                  <p className="text-sm text-gray-600">Afforestation</p>
-                  <h4 className="text-xl font-semibold text-gray-900">{data.afforestation.estimatedCarbonSeq.toFixed(2)} tCO2/year</h4>
-                </div>
-              </div>
-            </motion.div>
-
-            <motion.div
-              whileHover={{ scale: 1.02 }}
-              className="bg-gradient-to-br from-orange-50 to-orange-100 p-6 rounded-xl shadow-sm"
-            >
-              <div className="flex items-center space-x-4">
-                <div className="w-12 h-12 rounded-lg bg-orange-500 bg-opacity-20 flex items-center justify-center">
-                  <FaLeaf className="w-6 h-6 text-orange-600" />
-                </div>
-                <div>
-                  <p className="text-sm text-gray-600">Biodiversity Conservation</p>
-                  <h4 className="text-xl font-semibold text-gray-900">{data.biodiversityConservation.estimatedCarbonSeq.toFixed(2)} tCO2/year</h4>
-                </div>
-              </div>
-            </motion.div>
-
-            <motion.div
-              whileHover={{ scale: 1.02 }}
-              className="bg-gradient-to-br from-yellow-50 to-yellow-100 p-6 rounded-xl shadow-sm"
-            >
-              <div className="flex items-center space-x-4">
-                <div className="w-12 h-12 rounded-lg bg-yellow-500 bg-opacity-20 flex items-center justify-center">
-                  <FaMountain className="w-6 h-6 text-yellow-600" />
-                </div>
-                <div>
-                  <p className="text-sm text-gray-600">Green Technology</p>
-                  <h4 className="text-xl font-semibold text-gray-900">{data.greenTechnology.estimatedCarbonSeq.toFixed(2)} tCO2/year</h4>
-                </div>
-              </div>
-            </motion.div>
-          </div>
-
-          {/* Stepper and Charts */}
           {!showCharts ? (
             <Stepper activeStep={activeStep} orientation="vertical">
               {steps.map((step, index) => (
@@ -258,12 +314,17 @@ const CarbonSinks = () => {
                     {step.label}
                   </StepLabel>
                   <StepContent>
-                    {step.content}
+                    <CarbonSinksInput
+                      type={step.type}
+                      data={data[step.type]}
+                      onUpdate={(newValues) => handleDataUpdate(step.type, newValues)}
+                    />
                     <Box sx={{ mb: 2 }}>
                       <div>
                         <Button
-                          variant="outlined"
                           onClick={handleNext}
+                          variant="outlined"
+                          disabled={isSubmitting}
                           sx={{ 
                             mt: 1, 
                             mr: 1,
@@ -276,10 +337,16 @@ const CarbonSinks = () => {
                             }
                           }}
                         >
-                          {index === steps.length - 1 ? 'Finish' : 'Continue'}
+                          {isSubmitting ? (
+                            <CircularProgress size={24} color="inherit" />
+                          ) : index === steps.length - 1 ? (
+                            'Submit'
+                          ) : (
+                            'Continue'
+                          )}
                         </Button>
                         <Button
-                          disabled={index === 0}
+                          disabled={index === 0 || isSubmitting}
                           onClick={handleBack}
                           sx={{ 
                             mt: 1, 

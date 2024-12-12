@@ -59,3 +59,26 @@ export const getEmissionCalculations = async () => {
         throw error.response?.data || error.message;
     }
 };
+
+// Add new emission and get updated calculations
+export const addEmissionAndGetUpdates = async (emissionData) => {
+    try {
+        // First add the emission
+        const addResponse = await api.post('/emissions/add-emissions', emissionData);
+        
+        // Then get updated calculations
+        const [emissionsData, calculationsData] = await Promise.all([
+            getEmissions(),
+            calculateEmissions()
+        ]);
+        
+        return {
+            success: true,
+            addResponse: addResponse.data,
+            emissionsData,
+            calculationsData
+        };
+    } catch (error) {
+        throw error.response?.data || error.message;
+    }
+};

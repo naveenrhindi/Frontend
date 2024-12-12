@@ -1,13 +1,38 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { FaTree, FaSeedling, FaLeaf, FaMountain } from 'react-icons/fa';
+import axios from 'axios';
 
 const CarbonSinksInput = ({ type, data, onUpdate }) => {
+  const [emissionData, setEmissionData] = useState({
+    id: 20,
+    date: new Date().toISOString(),
+    emissions: {
+      excavation: '14654.00',
+      transportation: '1686.40',
+      equipment: '1393.60',
+      methane: '2187.50',
+      total: '19921.50'
+    },
+    unit: 'kg CO2e'
+  });
+
   const handleInputChange = (field, value) => {
     if (typeof value === 'number') {
       value = value === 0 ? 0 : parseFloat(value.toString().replace(/^0+/, ''));
     }
     onUpdate({ ...data, [field]: value });
+  };
+
+  const handleSubmit = async () => {
+    try {
+      const response = await axios.post('http://localhost:5001/api/emissions/get-emission-calculations', emissionData);
+      console.log('Emission calculations:', response.data);
+      // Here you would typically update the state to reflect the received data
+      // For example, you could set it to a state variable to display on the dashboard
+    } catch (error) {
+      console.error('Error submitting emission data:', error);
+    }
   };
 
   const inputClasses = "w-full p-2 border border-gray-300 rounded bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent";
@@ -236,7 +261,13 @@ const CarbonSinksInput = ({ type, data, onUpdate }) => {
     case 'greenTechnology':
       return renderGreenTechnologyInputs();
     default:
-      return null;
+      return (
+        <div>
+          <h1>Carbon Emissions Input</h1>
+          <button onClick={handleSubmit}>Submit Emission Data</button>
+          {/* Add UI elements to display calculated data here */}
+        </div>
+      );
   }
 };
 

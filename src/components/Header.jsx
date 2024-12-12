@@ -22,9 +22,11 @@ function Header({ ownerData }) {
   };
 
   const navItems = [
-    { label: 'Dashboard', path: '/dashboard/visualise' },
     { label: 'Emission Data', path: '/dashboard/dataInput' },
     { label: 'Carbon Sinks', path: '/dashboard/carbonSinks' },
+    { label: 'Visualise', path: '/dashboard/visualise' },
+    
+    
     { label: 'Pathways', path: '/dashboard/suggestions' },
     { label: 'Reports', path: '/dashboard/reports' }
   ];
@@ -39,6 +41,8 @@ function Header({ ownerData }) {
           CarbonTrack Dashboard
         </Link>
       </div>
+
+      
       
       <nav className="flex items-center gap-2 mt-4 sm:mt-0">
         {navItems.map((item, index) => (
